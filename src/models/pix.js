@@ -1,4 +1,4 @@
-const conexao = require('../config');
+const conexao = require('../../bin/database');
 const Usuario = require('./usuario');
 const Banco = require('./banco');
 const { Sequelize, DataTypes } = require('sequelize');
@@ -37,13 +37,10 @@ Pix.belongsTo(Usuario,{
     foreignKey: 'usuario_id'
 });
 
-setTimeout(() => {
-    Pix.sync({ force: true })
-  .then(() => console.log('Tabela "pix" criada com sucesso!'))
-  .catch(err => console.error('Erro ao criar a tabela "pix":', err));
-}, 100);
 
-
+//  Pix.sync({ force: true })
+//    .then(() => console.log('Tabela "pix" criada com sucesso!'))
+//    .catch(err => console.error('Erro ao criar a tabela "pix":', err));
   
 module.exports = Pix;
 
