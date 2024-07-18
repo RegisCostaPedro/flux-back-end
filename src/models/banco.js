@@ -1,4 +1,4 @@
-const conexao = require('../../bin/database')
+const conexao = require('../config/database')
 const { Sequelize, DataTypes } = require('sequelize');
 
 const Banco = conexao.define('banco', {
@@ -9,10 +9,14 @@ const Banco = conexao.define('banco', {
     primaryKey: true
   },
   nome_banco: {
-    type: DataTypes.STRING(50),
+    type: DataTypes.STRING,
     allowNull: false,
-
-  }
+    unique: true
+  },
+  descricao: {
+    type: DataTypes.TEXT,
+    allowNull: true
+}
 
 });
 
@@ -20,7 +24,7 @@ const Banco = conexao.define('banco', {
 
 
 
-//  Banco.sync({ force: true })
-//    .then(() => console.log('Tabela "banco" criada com sucesso!'))
-//    .catch(err => console.error('Erro ao criar a tabela "banco":', err));
+  // Banco.sync({ force: true })
+  //   .then(() => console.log('Tabela "banco" criada com sucesso!'))
+  //   .catch(err => console.error('Erro ao criar a tabela "banco":', err));
 module.exports = Banco;
