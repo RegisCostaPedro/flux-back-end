@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const ValidationContract = require('../validators/fluent-validator');
 const authService = require('../services/auth-service');
 
+
+//Buscar todos usuários
 exports.listarUsuarios = async(req,res,next)=>{
  
  try {
@@ -23,7 +25,7 @@ exports.listarUsuarios = async(req,res,next)=>{
     })
  }
 };
-
+//Cadastrar usuário
 exports.cadastrarUsuario = async(req,res,next)=>{
    
 
@@ -47,17 +49,22 @@ exports.cadastrarUsuario = async(req,res,next)=>{
             cpf: req.body.cpf,
             email: req.body.email,
             senha:hashedPassword,
+            roles: "usuario"
         });
           
-        res.status(201).send(usuario);
+        if (usuario.status === 201) {
+            res.status(201).send(usuario.data);
+        } else {
+            res.status(usuario.status).send({ message: usuario.message });
+        }
 
     } catch (error) {
         res.status(500).send({
-            message: "Falha ao processar requisição"
+            message: "Falha ao processar requisição" + error
         })
     }
 }
-
+//Atualizar usuário
 exports.atualizarUsuario = async(req,res,next) =>{
     try {
         const usuario = await repository.put(req.params.id,req.body);
@@ -68,7 +75,7 @@ exports.atualizarUsuario = async(req,res,next) =>{
         });
     }
 }
-
+//Deletar usuário
 exports.deletarUsuario = async(req,res,next) =>{
     try {
         const usuario = await repository.delete(req.params.id);
@@ -82,7 +89,7 @@ exports.deletarUsuario = async(req,res,next) =>{
         });
     }
 }
-
+//Autenticar usuário (login)
 exports.autenticar = async(req,res,next)=>{
     try {
       
@@ -99,8 +106,11 @@ exports.autenticar = async(req,res,next)=>{
               return;
         }
         const token = await authService.generateToken({
+            id: usuario.id_usuario,
             email: usuario.email,
-             nome: usuario.nome
+             nome: usuario.nome,
+             roles:usuario.roles
+
         })
 
         res.status(201).send({
