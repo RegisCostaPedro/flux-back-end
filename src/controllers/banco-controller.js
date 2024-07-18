@@ -87,3 +87,22 @@ exports.cadastrarBanco = async(req,res,next)=>{
          });
      }
  }
+// Buscar bancos pelo id
+ exports.listarBancosPorId = async(req,res,next)=>{
+        try {
+            const banco = await repository.getById(req.params.id);
+
+            if(!banco){
+                res.status(404).send({
+                    message: "Banco não encontrado"
+                });
+                return;
+            }
+        
+            res.status(200).send(banco);
+        } catch (error) {
+            res.status(400).send({
+                message: "Falha ao processar requisição" + error
+            })
+        }
+ }

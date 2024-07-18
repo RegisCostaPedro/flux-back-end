@@ -57,4 +57,10 @@ exports.delete = async (id) => {
     return res;
 };
 
+exports.getById = async(id)=>{
+    const res = await Banco.findByPk(id);
+    return res;
+
+  
+};
 
