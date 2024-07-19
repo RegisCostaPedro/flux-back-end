@@ -29,10 +29,10 @@ const Usuario = conexao.define('usuario', {
     allowNull: false
   },
   roles: {
-    type: DataTypes.ENUM,
+    type: DataTypes.ENUM('usuario','admin'),
     values: ['usuario', 'admin'],
-    allowNull: false,
-    defaultValue: 'usuario'
+    allowNull: false
+ 
   }
 
 });
@@ -40,4 +40,5 @@ const Usuario = conexao.define('usuario', {
   // Usuario.sync({ force: true })
   //   .then(() => console.log('Tabela "usuario" criada com sucesso!'))
   //   .catch(err => console.error('Erro ao criar a tabela "usuario":', err));
+  
 module.exports = Usuario;
