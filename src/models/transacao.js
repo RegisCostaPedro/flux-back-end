@@ -1,51 +1,68 @@
-const conexao = require('../config/database')
-const { Sequelize, DataTypes } = require('sequelize');
+const conexao = require('../config/database');
+const { Sequelize, DataTypes, Model } = require('sequelize');
 const Conta = require('./conta');
 const Usuario = require('./usuario');
 
-const Transacao = conexao.define('transacao',{
-    id_transacao:{
+class Transacao extends Model {
+  static init(sequelize) {
+    return super.init({
+      id_transacao: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
-        
-    },
-    conta_id:{
+      },
+      conta_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references:{
-        model: Conta,
-        key: 'id_conta'
+        references: {
+          model: Conta,
+          key: 'id_conta',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         }
-    },
-    data_transacao:{
+      },
+      data_transacao: {
         type: DataTypes.DATE,
         allowNull: false
-    },
-    valor:{
+      },
+      valor: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
-        defaultValue: 0.00
-    },
-    tipo_transacao:{
+        defaultValue: 0.00,
+        set(valor) {
+          if (valor < 0) {
+            throw new Error('O valor da transação não pode ser negativo');
+          }
+          this.setDataValue('valor', valor);
+        }
+      },
+      tipo_transacao: {
         type: DataTypes.ENUM('debito', 'credito', 'transferencia'),
         allowNull: false
-    },
-    descricao:{
+      },
+      descricao: {
         type: DataTypes.TEXT,
         allowNull: false
-    },
-    usuario_id:{
+      },
+      usuario_id: {
         type: DataTypes.INTEGER,
-        allowNull:false,
-        references:{
-            model:Usuario,
-            key:'id_usuario'
+        allowNull: false,
+        references: {
+          model: Usuario,
+          key: 'id_usuario',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         }
-    }
-});
+      }
+    }, {
+      sequelize,
+      modelName: 'Transacao',
+      tableName: 'transacao'
+    });
+  }
+}
 
-// Transacao.sync({ force: true })
-//    .then(() => console.log('Tabela "transacao" criada com sucesso!'))
-//    .catch(err => console.error('Erro ao criar a tabela "transacao":', err));
+Transacao.init(conexao);
+
+module.exports = Transacao;

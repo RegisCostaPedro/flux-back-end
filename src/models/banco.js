@@ -1,30 +1,32 @@
-const conexao = require('../config/database')
-const { Sequelize, DataTypes } = require('sequelize');
+const conexao = require('../config/database');
+const { Sequelize, DataTypes, Model } = require('sequelize');
 
-
-const Banco = conexao.define('banco', {
-  id_banco: {
-    autoIncrement: true,
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    primaryKey: true
-  },
-  nome_banco: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
-  },
-  descricao: {
-    type: DataTypes.TEXT,
-    allowNull: true
+class Banco extends Model {
+  static init(sequelize) {
+    return super.init({
+      id_banco: {
+        autoIncrement: true,
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true
+      },
+      nome_banco: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+      },
+      descricao: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      }
+    }, {
+      sequelize,
+      modelName: 'Banco',
+      tableName: 'banco'
+    });
+  }
 }
 
-});
+Banco.init(conexao);
 
-
-
-// Banco.sync({ force: true })
-//     .then(() => console.log('Tabela "banco" criada com sucesso!'))
-//      .catch(err => console.error('Erro ao criar a tabela "banco":', err));
-     
 module.exports = Banco;

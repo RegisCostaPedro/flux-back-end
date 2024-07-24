@@ -1,44 +1,45 @@
 const conexao = require('../config/database');
+const { Sequelize, DataTypes, Model } = require('sequelize');
 
-const { Sequelize, DataTypes } = require('sequelize');
-
-const Usuario = conexao.define('usuario', {
-  id_usuario: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  nome: {
-    type: DataTypes.STRING,
-    allowNull: false,
-
-  },
-  cpf: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
-  },
-  senha: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  roles: {
-    type: DataTypes.ENUM('usuario','admin'),
-    values: ['usuario', 'admin'],
-    allowNull: false
- 
+class Usuario extends Model {
+  static init(sequelize) {
+    return super.init({
+      id_usuario: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      nome: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      cpf: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+      },
+      senha: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      roles: {
+        type: DataTypes.ENUM('usuario', 'admin'),
+        allowNull: false
+      }
+    }, {
+      sequelize,
+      modelName: 'Usuario',
+      tableName: 'usuario'
+    });
   }
+}
 
-});
+Usuario.init(conexao);
 
-  // Usuario.sync({ force: true })
-  //   .then(() => console.log('Tabela "usuario" criada com sucesso!'))
-  //   .catch(err => console.error('Erro ao criar a tabela "usuario":', err));
-  
-module.exports = Usuario;
+module.exports =  Usuario;
