@@ -1,6 +1,4 @@
-
 const Banco = require('../models/banco');
-
 class BancoRepository {
 
     //Listar bancos

@@ -1,4 +1,3 @@
-
 const Usuario = require('../models/usuario');
 const bcrypt = require('bcrypt');
 
@@ -20,6 +19,14 @@ class UsarioRepository {
         return res;
 
     };
+
+ // Buscar pela pk
+static getByPk = async (id) => {
+    const res = await Usuario.findByPk(id);
+    return res;
+
+};
+
 
     //Cadastrar usuário
     static post = async (body) => {
@@ -90,5 +97,7 @@ class UsarioRepository {
     };
 
 }
+
+
 
 module.exports = UsarioRepository;
