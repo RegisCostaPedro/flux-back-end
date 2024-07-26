@@ -39,6 +39,7 @@ class Conta extends Model {
       },
       tipo_conta: {
         type: DataTypes.ENUM('corrente', 'poupanca', 'salario'),
+        defaultValue: "salario",
         allowNull: false
       }
     }, {
