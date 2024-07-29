@@ -59,7 +59,7 @@ class ContaRepository {
     static put = async (id, novoSaldo) => {
         return await Conta.update({ saldo: novoSaldo }, { where: { id_conta: id } });
     }
-    
+
     // deletar conta bancaria do usuário
     static delete = async (id, usuario_id_TOKEN) => {
         // Verifica se existe o usuario no banco e passado pelo token 
@@ -113,7 +113,7 @@ class ContaRepository {
         return res;
     };
 
-   
+
 
 }
 

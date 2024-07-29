@@ -67,21 +67,26 @@ class ContaController {
 
             const contaID = req.params.id;
             const valor = Number(req.body.saldo);
+            const descricao = req.body.descricao
             const fkUsuarioId = dadosUsuario.id;
 
-                const resultado = await service.atualizarSaldo(contaID,valor,fkUsuarioId);
+            const resultado = await service.atualizarSaldo(
+                contaID,
+                valor,
+                fkUsuarioId,
+                descricao);
 
-                if (resultado.status === 201) {
-                    return res.status(201).send(resultado.data);
-                } else {
-                    return res.status(resultado.status).send({ message: resultado.message });
-                }
+            if (resultado.status === 201) {
+                return res.status(201).send(resultado.data);
+            } else {
+                return res.status(resultado.status).send({ message: resultado.message });
+            }
         } catch (error) {
             res.status(500).send({
                 message: "Falha ao processar requisição: " + error
             });
         }
-    
+
     }
 
     static deletarContaBancaria = async (req, res) => {
