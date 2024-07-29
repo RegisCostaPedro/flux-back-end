@@ -30,15 +30,11 @@ class Transacao extends Model {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
         defaultValue: 0.00,
-        set(valor) {
-          if (valor < 0) {
-            throw new Error('O valor da transação não pode ser negativo');
-          }
-          this.setDataValue('valor', valor);
-        }
+      
       },
-      tipo_transacao: {
-        type: DataTypes.ENUM('debito', 'credito', 'transferencia'),
+    
+      tipo_operacao: {
+        type: DataTypes.ENUM('entrada', 'retirada'),
         allowNull: false
       },
       descricao: {

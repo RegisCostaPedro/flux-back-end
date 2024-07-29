@@ -18,11 +18,11 @@ Caso as tebelas não estajam criadas descomente as linhas abaixo (linha 19-32)
    e elas serão criadas automaticamente  
    Você pode dar CTRL + D e repetir o mesmo atalho para selecionar todas as '//'  */
 
-// const Usuario = require('./models/usuario');
-// const Pix = require('./models/pix');
-// const Banco = require('./models/banco');
-// const Conta = require('./models/conta');
-// const Transacao = require('./models/transacao');
+//  const Usuario = require('./models/usuario');
+//  const Pix = require('./models/pix');
+//  const Banco = require('./models/banco');
+//  const Conta = require('./models/conta');
+//  const Transacao = require('./models/transacao');
 
 // Função imediata
 // (async () => {
