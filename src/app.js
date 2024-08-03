@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const conexao = require('./config/database');
 const config = require('./config/config');
+require('dotenv').config();
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -39,12 +40,14 @@ const indexRoute = require('./routes/index-route');
 const usuarioRoute = require('./routes/usuario-route');
 const bancoRoute = require('./routes/banco-route');
 const contaRoute = require('./routes/conta-route');
+const pixRoute = require('./routes/pix-route');
 
 // rotas de acesso 
 app.use('/', indexRoute);
 app.use('/flux', usuarioRoute);
 app.use('/banco', bancoRoute);
 app.use('/conta',contaRoute);
+app.use(pixRoute)
 
 
 // ------ Habilita o CORS ------

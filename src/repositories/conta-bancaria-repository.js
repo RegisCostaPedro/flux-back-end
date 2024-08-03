@@ -106,14 +106,19 @@ class ContaRepository {
         return conta;
     }
 
-
     // Buscar conta pelo ID dela
-    static getById = async (id) => {
-        const res = await Conta.findByPk(id);
-        return res;
-    };
+    static getById = async (id, usuario_id) => {
+        const conta = await Conta.findOne({ where:
+             { id_conta: id, usuario_id } 
+            }
+        );
 
+        if (!conta) {
+            return { message: 'Conta não encontrada ou não pertence ao usuário', status: 404 };
+        }
 
+        return { data: conta, status: 200 };
+    }
 
 }
 

@@ -114,7 +114,29 @@ class ContaController {
         }
     }
 
+    static buscarContasBancariasPorId = async(req,res) =>{
+        try {
+            //Recupera o token
+            const token = req.body.token || req.query.token || req.headers['x-access-token'];
 
+            // Decodifica o token
+            const dadosUsuario = await authService.decodeToken(token);
+
+
+            const conta = await repository.getById(req.params.id,dadosUsuario.id);
+
+            if (conta.status === 200) {
+                return res.status(conta.status).send(conta.data);
+            } else {
+                return res.status(conta.status).send({ message: conta.message });
+            }
+
+        } catch (error) {
+            res.status(500).send({
+                message: "Falha ao processar requisição" + error
+            })
+        }
+    }
 
 }
 

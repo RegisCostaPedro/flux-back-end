@@ -1,5 +1,5 @@
 const conexao = require('../config/database');
-const { Sequelize, DataTypes, Model } = require('sequelize');
+const { Sequelize, DataTypes, Model, DATE } = require('sequelize');
 const Usuario = require('./usuario');
 const Banco = require('./banco');
 
@@ -7,36 +7,49 @@ class Pix extends Model {
   static init(sequelize) {
     return super.init({
       id_pix: {
-        autoIncrement: true,
-        type: DataTypes.INTEGER,
+        type: Sequelize.UUID,
         allowNull: false,
-        primaryKey: true
+        primaryKey: true,
+        defaultValue: Sequelize.UUIDV4
       },
-      chave_pix: {
-        type: DataTypes.STRING,
+      key: {
+        type: Sequelize.STRING,
         allowNull: false,
         unique: true
       },
+      key_type: {
+        type: Sequelize.ENUM('EMAIL', 'CNPJ', 'TELEFONE', 'CHAVE_ALEATORIA'),
+        allowNull: false
+      },
       usuario_id: {
-        type: DataTypes.INTEGER,
+        type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: Usuario,
-          key: 'id_usuario',
-          onDelete: 'CASCADE',
-          onUpdate: 'CASCADE'
-        }
+          model: 'Usuario',
+          key: 'id_usuario'
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       },
       banco_id: {
-        type: DataTypes.INTEGER,
+        type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: Banco,
+          model: 'Banco',
           key: 'id_banco'
         },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE'
-      }
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        allowNull: false
+      },
+      updated_at:{
+        type: DataTypes.DATE,
+        allowNull: false
+      },
+   
     }, {
       sequelize,
       modelName: 'Pix',

@@ -5,25 +5,29 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Pix', {
       id_pix: {
-        autoIncrement: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         allowNull: false,
-        primaryKey: true
+        primaryKey: true,
+        defaultValue: Sequelize.UUIDV4
       },
-      chave_pix: {
+      key: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true
+      },
+      key_type: {
+        type: Sequelize.ENUM('EMAIL', 'CNPJ', 'TELEFONE', 'CHAVE_ALEATORIA'),
+        allowNull: false
       },
       usuario_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: 'Usuario',
-          key: 'id_usuario',
-          onDelete: 'CASCADE',
-          onUpdate: 'CASCADE'
-        }
+          key: 'id_usuario'
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       },
       banco_id: {
         type: Sequelize.INTEGER,
@@ -35,18 +39,10 @@ module.exports = {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE'
       }
-    }, {
-      Sequelize,
-      modelName: 'Pix',
-      tableName: 'pix'
     });
-
-
-
   },
 
   async down(queryInterface) {
     await queryInterface.dropTable('Pix');
-
   }
 };
