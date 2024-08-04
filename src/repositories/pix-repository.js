@@ -9,6 +9,25 @@ require('dotenv').config();
 
 
 class PixRepository {
+    static get = async (usuario_ID_TOKEN) => {
+        // Lista todas as contas pertencentes ao usuário
+        const pixEncontrados = await Pix.findAll({
+            where: {
+                usuario_id:usuario_ID_TOKEN
+                
+            }
+        });
+    
+        // Verifica se a chave PIX foi encontrada no banco
+        if (pixEncontrados.length === 0) {
+            return {
+                message: 'Pix não encontrada ou inexistente',
+                status: 404
+            };
+        }
+    
+        return { data: pixEncontrados, status: 200 };
+    }
 
     static post = async (body) => {
         try {
@@ -34,9 +53,10 @@ class PixRepository {
                 usuario_id: body.usuario_id,
                 banco_id: body.banco_id,
                 created_at: new Date(),
-                updated_at: new Date()
+                updated_at: new Date(),
+                status: "VALIDANDO"
             });
-    
+         
             return { data: pix, status: 200 };
         } catch (error) {
             console.error('Error creating PIX entry:', error);
@@ -45,6 +65,40 @@ class PixRepository {
                 status: 500
             };
         }
+    }
+
+    static findById = async(id) =>{
+         // Lista todas as contas pertencentes ao usuário
+         const pixEncontrados = await Pix.findByPk({
+            where: {
+                usuario_id:id
+                
+            }
+        });
+    
+        // Verifica se a chave PIX foi encontrada no banco
+        if (pixEncontrados.length === 0) {
+            return {
+                message: 'Pix não encontrada ou inexistente',
+                status: 404
+            };
+        }
+    
+        return { data: pixEncontrados, status: 200 };
+    }
+
+    static put = async (body) => {
+        const updatePix = await Pix.update(
+            { status:   body.status,},
+            { where: { id_pix: body.id_pix } }
+        );
+        if (!updatePix) {
+            return {
+                message: 'Erro ao atualizar chave',
+                status: 404
+            };
+        }
+        return { data: updatePix, status: 200 };
     }
 }   
 

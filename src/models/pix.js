@@ -49,6 +49,10 @@ class Pix extends Model {
         type: DataTypes.DATE,
         allowNull: false
       },
+      status: {
+        type: Sequelize.ENUM('VALIDANDO','PENDENTE','REGISTRADA','ERRO'),
+        allowNull: false
+      }
    
     }, {
       sequelize,
