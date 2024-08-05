@@ -13,9 +13,7 @@ class UsarioRepository {
 
     // Buscar pelo id
     static getById = async (id) => {
-        const res = await Usuario.findByPk(id, {
-            attributes: ['nome', 'email', 'senha']
-        });
+        const res = await Usuario.findByPk(id);
         return res;
 
     };

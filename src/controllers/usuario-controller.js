@@ -166,22 +166,21 @@ class UsuarioController {
 
             // Decodifica o token
             const data = await authService.decodeToken(token);
+             const usuario_id_token = data.id;   
 
+            const usuario = await repository.getById(usuario_id_token);
 
-            const usuario = await repository.getById(data.id);
-            console.log(usuario);
             if (!usuario) {
-                res.status(404).send({
-                    message: 'Cliente não encontrado'
-                });
+                res.status(404).send({ message: 'Usuário não encontrado'});
                 return;
             }
 
+            // Criando novo token de um usuário existente
             const tokenData = await authService.generateToken({
-                id: usuario._id,
+                id: usuario.id_usuario,
                 email: usuario.email,
                 nome: usuario.nome,
-                roles: usuario.roles
+                roles: usuario.roles //coloca no refresh token
             })
 
             res.status(201).send({

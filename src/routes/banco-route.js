@@ -12,8 +12,7 @@ router.get('/buscar-banco/id/:id',authService.isAdmin, controller.listarBancosPo
 router.put('/atualizar-banco/:id',authService.isAdmin,controller.atualizarBanco); //admin
 router.delete('/excluir-banco/:id',authService.isAdmin,controller.deletarBanco); //admin
 
-// router.get('/listar-bancos/:nome',authService.authorize, controller.listarBancosPorNome ); 
-//users, para ver os bancos disponiveis
+
 
 
 
