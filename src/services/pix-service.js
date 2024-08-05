@@ -106,7 +106,7 @@ class pixService {
             };
 
             const verifyResponse = await axios.request(verifyOptions);
-
+            console.log('Verify Response:', verifyResponse.data);
             // Consultar o status após a verificação
             const statusOptions = {
                 method: 'GET',
@@ -122,7 +122,7 @@ class pixService {
             const keyRegistredStatus = statusResponse.data.status;
 
             const updatedStatus = keyRegistredStatus === 'REGISTRADA' ? 'REGISTRADA' : keyRegistredStatus;
-           
+
             const updateResult = await repository.put({
                 id_pix: idPix,
                 status: updatedStatus
