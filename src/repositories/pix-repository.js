@@ -1,7 +1,7 @@
 const { where } = require('sequelize');
 const Pix = require('../models/pix');
 const axios = require('axios');
-const  pixAuthService = require('../services/auth-transfeera-service');
+const pixAuthService = require('../services/auth-transfeera-service');
 const Usuario = require('../models/usuario');
 const Banco = require('../models/banco');
 require('dotenv').config();
@@ -13,11 +13,11 @@ class PixRepository {
         // Lista todas as contas pertencentes ao usuário
         const pixEncontrados = await Pix.findAll({
             where: {
-                usuario_id:usuario_ID_TOKEN
-                
+                usuario_id: usuario_ID_TOKEN
+
             }
         });
-    
+
         // Verifica se a chave PIX foi encontrada no banco
         if (pixEncontrados.length === 0) {
             return {
@@ -25,7 +25,7 @@ class PixRepository {
                 status: 404
             };
         }
-    
+
         return { data: pixEncontrados, status: 200 };
     }
 
@@ -33,13 +33,13 @@ class PixRepository {
         try {
             const usuario = await Usuario.findByPk(body.usuario_id);
             const banco = await Banco.findByPk(body.banco_id);
-    
+
             if (!usuario) {
                 return {
                     message: `O usuário não encontrado`,
                     status: 404
                 };
-    
+
             }
             if (!banco) {
                 return { message: "Banco não encontrado", status: 404 };
@@ -59,7 +59,7 @@ class PixRepository {
             if (!pix) {
                 return { status: 400, message: 'Erro ao criar chave PIX' };
             }
-    
+
             return { data: pix, status: 200 };
         } catch (error) {
             console.error('Error creating PIX entry:', error);
@@ -70,13 +70,13 @@ class PixRepository {
         }
     }
 
-    
-    static findById = async(id) =>{
-         // Lista todas as contas pertencentes ao usuário
-         const pixEncontrados = await Pix.findByPk({
+
+    static findById = async (id) => {
+        // Lista todas as contas pertencentes ao usuário
+        const pixEncontrados = await Pix.findByPk({
             where: {
-                usuario_id:id
-                
+                usuario_id: id
+
             }
         });
 
@@ -88,7 +88,7 @@ class PixRepository {
                 status: 404
             };
         }
-    
+
         return { data: pixEncontrados, status: 200 };
     }
 
@@ -103,14 +103,19 @@ class PixRepository {
             return { message: 'Chave Pix já registrada no banco de dados', status: 200, data: pixEncontrados };
         }
         return { message: 'Chave Pix não encontrada', status: 404 };
-    
+
     }
 
     static put = async (body) => {
         const updatePix = await Pix.update(
-            { status:  
-                 body.status,},
-            { where: { id_pix: body.id_pix } }
+            {
+                status:
+                    body.status
+            }, {
+            where: {
+                id_pix: body.id_pix
+            }
+        }
         );
         if (!updatePix) {
             return {
@@ -120,10 +125,42 @@ class PixRepository {
         }
         return { data: updatePix, status: 200 };
     }
-}   
+
+    static delete = async (idPix, usuario_id) => {
+        const chaveDeletada = await Pix.destroy(
+            {
+                id_pix: idPix,
+                where: {
+                    usuario_id: usuario_id
+                }
+            }
+
+        );
+        if (!chaveDeletada) {
+            return {
+                message: 'Erro ao deletar chave',
+                status: 400
+            };
+        }
+        return { data: chaveDeletada, status: 204 };
+    }
+
+    static findByKey = async(key) => {
+        const chaveExistente  = Pix.findOne({
+            key: key
+        });
+        if(!chaveExistente){
+            return {
+                message: 'Chave PIX fornecida já existe',
+                status: 409
+            };
+        }
+        return { data: chaveExistente, status: 200 };
+    }
+}
 
 
-   
+
 module.exports = PixRepository;
 
 

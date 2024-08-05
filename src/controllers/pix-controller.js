@@ -17,26 +17,22 @@ class PixController {
 
             const accessToken = await authServiceAPI.returnAccessToken();
 
-            const response = pixService.criarChave(key_type,key,dadosUsuario,accessToken,banco_id);
+            const response = pixService.criarChave(key_type, key, dadosUsuario, accessToken, banco_id);
 
-          
 
-            console.log(response.data);
-
-           // Verificar e tratar a resposta
-           if ((await response).status === 200) {
-            return res.status(200).send((await response).data);
-        } else {
-            return res.status((await response).data || 500).send({ message: (await response).message});
-        }
-        }catch(error){
+            if ((await response).status === 200) {
+                return res.status(200).send((await response).data);
+            } else {
+                return res.status((await response).data || 500).send({ message: (await response).message });
+            }
+            
+        } catch (error) {
             res.status(400).send({
                 message: "Falha ao processar requisição: " + error
             })
-        
+
         }
     }
-
 
     static verificarChave = async (req, res) => {
         try {
@@ -59,20 +55,43 @@ class PixController {
             }
 
         } catch (error) {
-        throw error
-            // console.error('Error creating PIX key:', error);
 
-
-            // if (error.response && error.response.data) {
-            //     return {
-            //         status: error.response.data.statusCode || 500,
-            //         message: error.response.data.message
-            //     };
-            // }
+            res.status(400).send({
+                message: "Falha ao processar requisição: " + error
+            })
         }
+
     }
 
+    static reenviarCodigo = async (req, res) => {
+        try {
 
+            const idPix = req.params.id;
+            
+
+            const token = req.body.token || req.query.token || req.headers['x-access-token'];
+            const dadosUsuario = await authService.decodeToken(token);
+            const emailUsuario = dadosUsuario.email;
+
+            const accessToken = await authServiceAPI.returnAccessToken();
+            const response = await pixService.reenviarCodigo(idPix, emailUsuario, accessToken);
+
+            console.log(response.data);
+
+            if (response.status === 200) {
+                return res.status(200).send(response.data);
+            } else {
+                return res.status(response.status).send({ message: response.message });
+            }
+
+        } catch (error) {
+
+            res.status(400).send({
+                message: "Falha ao processar requisição: " + error
+            })
+        }
+
+    }
 
     static listarChavesPix = async (req, res) => {
         try {
@@ -139,6 +158,32 @@ class PixController {
         }
     }
 
+    static deletarChave = async (req, res) => {
+        try {
+            const idPix = req.params.id;
+            const token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+            // Decodifica o token
+            const dadosUsuario = await authService.decodeToken(token);
+            const usuario_id = dadosUsuario.id;
+            const emailUsuario = dadosUsuario.email;
+            const accessToken = await authServiceAPI.returnAccessToken();
+            const response = await pixService.deletarChave(idPix, usuario_id, emailUsuario, accessToken);
+
+            console.log(response.data);
+
+            if (response.status === 204) {
+                return res.status(204).send(response.data);
+            } else {
+                return res.status(response.status).send({ message: response.message });
+            }
+
+        } catch (error) {
+            res.status(400).send({
+                message: "Falha ao processar requisição: " + error
+            })
+        }
+    }
 }
 
 module.exports = PixController;
