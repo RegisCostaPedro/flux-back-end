@@ -31,7 +31,6 @@ class PixRepository {
 
     static post = async (body) => {
         try {
-            // Verifica se o usuário existe
             const usuario = await Usuario.findByPk(body.usuario_id);
             const banco = await Banco.findByPk(body.banco_id);
     
@@ -56,17 +55,22 @@ class PixRepository {
                 updated_at: new Date(),
                 status: "VALIDANDO"
             });
-         
+
+            if (!pix) {
+                return { status: 400, message: 'Erro ao criar chave PIX' };
+            }
+    
             return { data: pix, status: 200 };
         } catch (error) {
             console.error('Error creating PIX entry:', error);
             return {
-                message: "Falha ao criar entrada PIX: " + error.message,
+                message: "Falha ao criar criar chave PIX: " + error.message,
                 status: 500
             };
         }
     }
 
+    
     static findById = async(id) =>{
          // Lista todas as contas pertencentes ao usuário
          const pixEncontrados = await Pix.findByPk({
@@ -75,7 +79,8 @@ class PixRepository {
                 
             }
         });
-    
+
+
         // Verifica se a chave PIX foi encontrada no banco
         if (pixEncontrados.length === 0) {
             return {
@@ -87,9 +92,24 @@ class PixRepository {
         return { data: pixEncontrados, status: 200 };
     }
 
+    static findByPixId = async (pixKey_id) => {
+        // Procura todas as chaves pertencentes ao usuário
+        const pixEncontrados = await Pix.findOne({
+            where: {
+                id_pix: pixKey_id
+            }
+        });
+        if (pixEncontrados) {
+            return { message: 'Chave Pix já registrada no banco de dados', status: 200, data: pixEncontrados };
+        }
+        return { message: 'Chave Pix não encontrada', status: 404 };
+    
+    }
+
     static put = async (body) => {
         const updatePix = await Pix.update(
-            { status:   body.status,},
+            { status:  
+                 body.status,},
             { where: { id_pix: body.id_pix } }
         );
         if (!updatePix) {

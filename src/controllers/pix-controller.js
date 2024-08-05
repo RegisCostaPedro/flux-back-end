@@ -12,49 +12,31 @@ class PixController {
         try {
             const token = req.body.token || req.query.token || req.headers['x-access-token'];
             const dadosUsuario = await authService.decodeToken(token);
-
+            const banco_id = req.body.banco_id
             const { key_type, key } = req.body;
+
             const accessToken = await authServiceAPI.returnAccessToken();
 
-            const options = {
-                method: 'POST',
-                url: 'https://api-sandbox.transfeera.com/pix/key',
-                headers: {
-                    accept: 'application/json',
-                    'content-type': 'application/json',
-                    'user-Agent': dadosUsuario.email,
-                    Authorization: `Bearer ${accessToken}`
-                },
-                data: { key, key_type }
-            };
+            const response = pixService.criarChave(key_type,key,dadosUsuario,accessToken,banco_id);
 
-            const response = await axios.request(options);
-            const createdKey = response.data;
+          
 
-            // id vindo da API 
-            const id_pix = createdKey.id;
+            console.log(response.data);
 
-            const pix = await repository.post({
-                id_pix,
-                key: createdKey.key,
-                key_type: createdKey.key_type,
-                usuario_id: dadosUsuario.id,
-                banco_id: req.body.banco_id
-            });
-
-
-            if (pix.status === 200) {
-                return res.status(200).send(response.data);
-            } else {
-                return res.status(pix.status).send({ message: pix.message });
-            }
-        } catch (error) {
-            console.error('Error creating PIX key:', error);
-            return res.status(500).send({
-                message: "Falha ao processar requisição: " + error.message
-            });
+           // Verificar e tratar a resposta
+           if ((await response).status === 200) {
+            return res.status(200).send((await response).data);
+        } else {
+            return res.status((await response).data || 500).send({ message: (await response).message});
+        }
+        }catch(error){
+            res.status(400).send({
+                message: "Falha ao processar requisição: " + error
+            })
+        
         }
     }
+
 
     static verificarChave = async (req, res) => {
         try {
@@ -66,20 +48,27 @@ class PixController {
             const emailUsuario = dadosUsuario.email;
 
             const accessToken = await authServiceAPI.returnAccessToken();
-            const options = await pixService.verificarChave(idPix, emailUsuario, accessToken, verifyCode);
-            console.log(options.data);
+            const response = await pixService.verificarChave(idPix, emailUsuario, accessToken, verifyCode);
 
-            if (options.status === 200) {
-            return res.status(200).send(options.data);
-        } else {
-            return res.status(options.status).send({ message: options.message });
-        }
+            console.log(response.data);
+
+            if (response.status === 200) {
+                return res.status(200).send(response.data);
+            } else {
+                return res.status(response.status).send({ message: response.message });
+            }
 
         } catch (error) {
-            console.error('Error updating PIX key:', error);
-            return res.status(500).send({
-                message: "Falha ao processar requisição: " + error.message
-            });
+        throw error
+            // console.error('Error creating PIX key:', error);
+
+
+            // if (error.response && error.response.data) {
+            //     return {
+            //         status: error.response.data.statusCode || 500,
+            //         message: error.response.data.message
+            //     };
+            // }
         }
     }
 
