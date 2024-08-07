@@ -92,6 +92,7 @@ class UsuarioController {
     }
     //Atualizar usuário
     static atualizarUsuario = async (req, res) => {
+        
         try {
             const usuario = await repository.put(req.params.id, req.body);
 
@@ -138,16 +139,13 @@ class UsuarioController {
                 id: usuario.id_usuario,
                 email: usuario.email,
                 nome: usuario.nome,
-                roles: usuario.roles //coloca no refresh token
+                roles: usuario.roles // pra ajudar o front-end
 
             });
 
             res.status(201).send({
-                token: token,
-                data: {
-                    email: usuario.email,
-                    nome: usuario.nome
-                }
+                token: token
+               
             });
 
         } catch (error) {

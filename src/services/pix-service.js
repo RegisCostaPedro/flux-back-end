@@ -10,14 +10,9 @@ class pixService {
 
     static criarChave = async (key_type, key, dadosUsuario, accessToken, banco_id) => {
         try {
-            // Verificar se a chave já existe no banco de dados antes de fazer a solicitação à API da Transfeera
-            const pixExistente = await repository.findByPixId(key);
-            if (pixExistente.status === 200) {
-                return {
-                    status: 400,
-                    message: 'Chave Pix já registrada no banco de dados'
-                };
-
+       
+            if(key_type){
+                //fazer logica para caso a chave seja cnpj, o aleatoria
             }
 
             const options = {
@@ -37,6 +32,8 @@ class pixService {
             const id_pix = createdKey.id;
 
             const chaveExistente = await repository.findByKey(createdKey.key);
+            
+
             if(chaveExistente.status === 409){
                 return { status:  chaveExistente.status, message: response.data.statusCode };
             }
@@ -228,6 +225,7 @@ class pixService {
             }
         }
     }
+    
 
     static deletarChave = async (idPix, usuario_id, emailUsuario, accessToken) => {
 

@@ -35,15 +35,21 @@ Caso as tebelas não estajam criadas descomente as linhas abaixo (linha 19-32)
 //     }
 // })();
 
+// AVISO ! APOS A COMPILAÇÃO COMENTE ESSAS LINHAS NOVAMENTE, SENÃO VOCÊ PODE PERDER TODO O CONTEUDO
+
 // ------ Carrega Rotas ------
 const indexRoute = require('./routes/index-route');
 const usuarioRoute = require('./routes/usuario-route');
 const bancoRoute = require('./routes/banco-route');
 const contaRoute = require('./routes/conta-route');
 const pixRoute = require('./routes/pix-route');
+const homeRoute = require('./routes/home-route');
+
 
 // rotas de acesso 
 app.use('/', indexRoute);
+app.use(homeRoute);
+
 app.use('/flux', usuarioRoute);
 app.use('/banco', bancoRoute);
 app.use('/conta',contaRoute);
