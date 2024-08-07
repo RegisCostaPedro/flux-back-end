@@ -17,10 +17,10 @@ class HomeController {
 
         if(response.status === 200){
           
-            return res.status(response.status).send(response.data);
+            return res.status(response.status).json(response.data);
          
         }else{
-            return res.status(response.status).send({message: response.message})
+            return res.status(response.status).json({message: response.message})
         }
     }catch(error){
         res.status(500).send({

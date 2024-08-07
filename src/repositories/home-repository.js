@@ -16,10 +16,10 @@ class HomeRepository {
             type: QueryTypes.SELECT
         });
         if(!query){
-            return {status: 404, data: JSON.stringify(query, null, 2)};
+            return {status: 404, data:  query};
         }
         console.log(query);
-        return {status: 200, data:  JSON.stringify(query, null, 2)};
+        return {status: 200, data:  query};
     }
 
 }
