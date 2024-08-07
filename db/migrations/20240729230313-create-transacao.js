@@ -1,8 +1,5 @@
 'use strict';
-const Usuario = require('./20240729223455-create-usuario');
-const Conta = require('./20240729230001-create-conta');
-
-
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
   await queryInterface.createTable('Transacao',{

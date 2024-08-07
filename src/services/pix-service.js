@@ -6,7 +6,7 @@ const authService = require('../services/auth-service');
 const repository = require('../repositories/pix-repository');
 require('dotenv').config();
 
-class pixService {
+class PixService {
 
     static criarChave = async (key_type, key, dadosUsuario, accessToken, banco_id) => {
         try {
@@ -276,4 +276,4 @@ class pixService {
 
 
 
-module.exports = pixService;
+module.exports = PixService;

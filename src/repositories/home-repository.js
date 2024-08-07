@@ -1,9 +1,12 @@
 
 const Banco = require("../models/banco");
-const {Sequelize, QueryTypes} = require('sequelize');
+const Conta = require('../models/conta');
+const {Sequelize, QueryTypes, where} = require('sequelize');
+
 class HomeRepository {
 
-    static get = async (id_user) => {
+    static get = async (id_user,usuario_nome_token) => {
+
       const query = await Banco.sequelize
             .query(`
         SELECT usuario.nome,conta.saldo, banco.nome_banco, banco.descricao 
@@ -15,12 +18,22 @@ class HomeRepository {
             replacements: {id_user :id_user},
             type: QueryTypes.SELECT
         });
-        if(!query){
-            return {status: 404, data:  query};
+
+
+        // Cso o usuário não tenha nenhuma notificação, retornara apenas o nome dele
+        if(!query || query.length === 0){
+            return {status: 200 , data:  {
+                nome: usuario_nome_token ,
+                saldo: parseFloat(0.00),
+                nome_banco: null,
+                descricao: null,
+            }
+        };
         }
-        console.log(query);
+      
         return {status: 200, data:  query};
     }
+
 
 }
 

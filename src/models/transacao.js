@@ -2,6 +2,7 @@ const conexao = require('../config/database');
 const { Sequelize, DataTypes, Model } = require('sequelize');
 const Conta = require('./conta');
 const Usuario = require('./usuario');
+const Banco = require('./banco');
 
 class Transacao extends Model {
   static init(sequelize) {
@@ -50,6 +51,17 @@ class Transacao extends Model {
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         }
+      },
+        banco_id: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: {
+            model: Banco,
+            key: 'id_banco',
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
+          
+    },
       }
     }, {
       sequelize,

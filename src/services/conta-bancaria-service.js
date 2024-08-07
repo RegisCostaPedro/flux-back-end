@@ -7,7 +7,7 @@ const repository = require('../repositories/conta-bancaria-repository');
 
 class ContaBancariaService {
 
-    static atualizarSaldo = async (contaID, valor, fkUsuarioId,descricao) => {
+    static atualizarSaldo = async (contaID, valor, fkUsuarioId,descricao,fkBancoId) => {
 
         const contaBancariaEncontrada = await Conta.findByPk(contaID);
 
@@ -56,7 +56,8 @@ class ContaBancariaService {
             data_transacao: new Date(),
             tipo_operacao: tipoOperacao,
             descricao: descricao,
-            usuario_id: fkUsuarioId
+            usuario_id: fkUsuarioId,
+            banco_id: fkBancoId
         });
         return { data: conta, status: 201 };
 
