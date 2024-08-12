@@ -2,10 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const conexao = require('./config/database');
 const config = require('./config/config');
+const cors = require('cors');
+
+
 require('dotenv').config();
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 
 // ------- CONEXAO BANCO ---------
 conexao.authenticate().then(() => {
@@ -13,6 +17,8 @@ conexao.authenticate().then(() => {
 }).catch((erroMsg) => {
     console.log(erroMsg)
 })
+
+
 
 /* ------ MODELS ------------------------------  
 Caso as tebelas não estajam criadas descomente as linhas abaixo (linha 19-32)
@@ -23,7 +29,7 @@ Caso as tebelas não estajam criadas descomente as linhas abaixo (linha 19-32)
 //  const Pix = require('./models/pix');
 //  const Banco = require('./models/banco');
 //  const Conta = require('./models/conta');
-  const Transacao = require('./models/transacao');
+//  const Transacao = require('./models/transacao');
 
 // Função imediata
 // (async () => {
@@ -44,12 +50,13 @@ const bancoRoute = require('./routes/banco-route');
 const contaRoute = require('./routes/conta-route');
 const pixRoute = require('./routes/pix-route');
 const homeRoute = require('./routes/home-route');
-
+const carteiraRoute = require('./routes/carteira-route')
 
 // rotas de acesso 
 app.use('/', indexRoute);
 app.use(homeRoute);
-
+app.use(carteiraRoute);
+app.use('/login',usuarioRoute);
 app.use('/flux', usuarioRoute);
 app.use('/banco', bancoRoute);
 app.use('/conta',contaRoute);
@@ -57,10 +64,9 @@ app.use(pixRoute)
 
 
 // ------ Habilita o CORS ------
-app.use(function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, x-access-token');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    next();
-});
+app.use(cors({
+    origin: '*', // Permite todas as origens; ajuste conforme necessário
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'x-access-token']
+}));
 module.exports = app;
