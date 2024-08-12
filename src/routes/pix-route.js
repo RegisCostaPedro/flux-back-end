@@ -13,8 +13,4 @@ router.get('/pix/key/:id',authService.authorize,controller.buscarChavePixPorID);
 router.delete('/pix/key/:id',authService.authorize,controller.deletarChave);
 
 
-
-
-
-
 module.exports = router;
