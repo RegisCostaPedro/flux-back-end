@@ -3,7 +3,7 @@ const transacaoService = require('../services/transacao-service');
 const authService = require('../services/auth-service');
 class HomeController {
 
-    static renderCarteira= async (req, res) => {
+    static renderCarteira = async (req, res) => {
         try {
 
            //Recupera o token
@@ -12,13 +12,13 @@ class HomeController {
             // Decodifica o token
             const data = await authService.decodeToken(token);
             const usuario_id_token = data.id;
-            const usuario_nome_token = data.nome
+         
 
             const response = await transacaoService.listarHistoricoTransacao(usuario_id_token)
 
             if (response.status === 200) {
 
-                return res.status(response.status).json(response.data);
+                return res.status(response.status).json( response.data);
 
             } else {
                 return res.status(response.status).json({ message: response.data })

@@ -12,11 +12,13 @@ class CarteiraRepository {
                     transacao.valor, 
                     transacao.tipo_operacao,
                     transacao.descricao, 
-                    conta.saldo AS novo_saldo, 
+                    conta.saldo AS novo_saldo_conta_bancaria, 
                     transacao.data_transacao,
                     (SELECT SUM(c.saldo)
                     FROM conta c 
                     WHERE c.usuario_id = usuario.id_usuario) AS saldoTotalGeral
+                  
+
                 FROM 
                     transacao
                 JOIN 

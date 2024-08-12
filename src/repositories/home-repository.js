@@ -4,7 +4,7 @@ const Banco = require('../models/banco');
 
 class HomeRepository {
 
-    static get = async (id_user) => {
+    static getHomeData = async (id_user) => {
         const query = await Banco.sequelize
             .query(`
                 SELECT 

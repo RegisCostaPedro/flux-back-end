@@ -34,7 +34,7 @@ class Conta extends Model {
         }
       },
       saldo: {
-        type: DataTypes.DECIMAL(10, 2),
+        type: DataTypes.DECIMAL(10, 5),
         allowNull: false,
         defaultValue: 0.00,
        
