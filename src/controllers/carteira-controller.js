@@ -1,7 +1,7 @@
 
 const transacaoService = require('../services/transacao-service');
 const authService = require('../services/auth-service');
-class HomeController {
+class CarteiraController {
 
     static renderCarteira = async (req, res) => {
         try {
@@ -29,4 +29,4 @@ class HomeController {
     }
 }
 
-module.exports = HomeController;
+module.exports = CarteiraController;

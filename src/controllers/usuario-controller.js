@@ -4,23 +4,32 @@ const jwt = require('jsonwebtoken');
 const ValidationContract = require('../validators/fluent-validator');
 const authService = require('../services/auth-service');
 const { Model } = require('sequelize');
+const service = require('../services/usuario-service');
 
 class UsuarioController {
 
     //Buscar todos usuários
     static listarUsuarios = async (req, res) => {
-
         try {
-            const usuarioList = await repository.get();
+
+            //Recupera o token
+            const token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+            // Decodifica o token
+            const data = await authService.decodeToken(token);
+
+
+            const usuarioList = await service.get(data);
+            usuarioList.status
 
             if (!usuarioList) {
-                res.status(404).send({
-                    message: "Usuário não encontrado"
+                return res.status(usuarioList.status).send({
+                    message: usuarioList.message
                 });
-                return;
+
             }
 
-            res.status(200).send(usuarioList);
+            res.status(usuarioList.status).send(usuarioList.data);
         } catch (error) {
             res.status(400).send({
                 message: "Falha ao processar requisição: " + error
@@ -32,17 +41,26 @@ class UsuarioController {
     static buscarUsuarioPeloID = async (req, res) => {
 
         try {
+            //Recupera o token
+            const token = req.body.token || req.query.token || req.headers['x-access-token'];
 
-            const usuarioList = await repository.getById(req.params.id);
+            // Decodifica o token
+            const data = await authService.decodeToken(token);
 
-            if (!usuarioList) {
-                res.status(404).send({
-                    message: "Usuário não encontrado"
+            const id = req.params.id
+
+            // const usuario = await service.getById(data.id);
+            const usuario = await service.getById(id);
+
+
+            if (!usuario) {
+                res.status(usuario.status).send({
+                    message: usuario.message
                 });
                 return;
             }
 
-            res.status(200).send(usuarioList);
+            res.status(usuario.status).send(usuario.data);
         } catch (error) {
             res.status(400).send({
                 message: "Falha ao processar requisição: " + error
@@ -67,22 +85,18 @@ class UsuarioController {
                 res.status(400).send(contract.errors()).end();
                 return;
             }
-            const hashedPassword = await bcrypt.hash(req.body.senha, 10);
-            console.log(req.body.senha);
 
-            const usuario = await repository.post({
-                nome: req.body.nome,
-                cpf: req.body.cpf,
-                email: req.body.email,
-                senha: hashedPassword,
-                roles: "usuario"
-            });
+            const { nome, cpf, email, senha } = req.body
+            const usuario = await service.create(nome, cpf, email, senha);
+
+
 
             if (usuario.status === 201) {
                 res.status(201).send(usuario.data);
             } else {
                 res.status(usuario.status).send({ message: usuario.message });
             }
+
 
         } catch (error) {
             res.status(500).send({
@@ -92,7 +106,7 @@ class UsuarioController {
     }
     //Atualizar usuário
     static atualizarUsuario = async (req, res) => {
-        
+
         try {
             const usuario = await repository.put(req.params.id, req.body);
 
@@ -145,7 +159,7 @@ class UsuarioController {
 
             res.status(201).send({
                 token: token
-               
+
             });
 
         } catch (error) {
@@ -164,12 +178,12 @@ class UsuarioController {
 
             // Decodifica o token
             const data = await authService.decodeToken(token);
-             const usuario_id_token = data.id;   
+            const usuario_id_token = data.id;
 
             const usuario = await repository.getById(usuario_id_token);
 
             if (!usuario) {
-                res.status(404).send({ message: 'Usuário não encontrado'});
+                res.status(404).send({ message: 'Usuário não encontrado' });
                 return;
             }
 

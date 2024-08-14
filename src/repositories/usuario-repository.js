@@ -18,37 +18,28 @@ class UsarioRepository {
 
     };
 
- // Buscar pela pk
-static getByPk = async (id) => {
-    const res = await Usuario.findByPk(id);
-    return res;
+    // Buscar pela pk
+    static getByPk = async (id) => {
+        const res = await Usuario.findByPk(id);
+        return res;
 
-};
+    };
 
 
     //Cadastrar usuário
     static post = async (body) => {
-        let nomeUsuario = body.nome;
-        let emailUsuario = body.email;
-        let cpfUsuario = body.cpf;
-
-        const usuarioExistente = await Usuario.findOne({
-            where: {
-                nome: nomeUsuario,
-                email: emailUsuario,
-                cpf: cpfUsuario
-            }
-        });
-
-        if (usuarioExistente) {
-            return { message: "Usuário já cadastrado", status: 400 };
+        const usuario = await Usuario.create(body);
+        
+        if (!usuario) {
+            return { message: "Erro ao criar usuário", status: 400 };
         }
 
-        const res = await Usuario.create(body);
-        return { data: res, status: 201 };
+        return { data: usuario, status: 201 };
 
 
     }
+
+
     //Atualizar usuário
     static put = async (id, body) => {
         const res = await Usuario.findByPk(id)

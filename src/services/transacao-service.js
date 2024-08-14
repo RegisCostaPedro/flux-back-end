@@ -23,7 +23,6 @@ class TransacaoService {
                 status: 204, message: "Você ainda não realizou transações"
             };
         }
-
         const resultPorcentAndQuery = query.data.map(transacao => {
             let total = parseFloat(transacao.saldoTotalGeral);
             let valor = parseFloat(transacao.valor);
@@ -31,19 +30,19 @@ class TransacaoService {
 
             if (tipo_operacao == 'entrada') {
                 let aumentoPorcent = ((valor / total) * 100);
-                console.log(`Aumento Percentual: ${aumentoPorcent.toFixed(3)}%`);
+                console.log(`Aumento Percentual: ${aumentoPorcent.toFixed(2)}%`);
                 return {
                     ...transacao,
-                    porcentagem: `${aumentoPorcent.toFixed(3)}%`
+                    porcentagem: `${aumentoPorcent.toFixed(2)}%`
                 }
             }
             else if (tipo_operacao == 'retirada') {
                 let diminuicaoPorcent = ((valor / total) * 100);
-                console.log(`Diminuição Percentual: ${diminuicaoPorcent.toFixed(3)}%`);
+                console.log(`Diminuição Percentual: ${diminuicaoPorcent.toFixed(2)}%`);
 
                 return {
                     ...transacao,
-                    porcentagem: `${diminuicaoPorcent.toFixed(3)}%`
+                    porcentagem: `${diminuicaoPorcent.toFixed(2)}%`
                 }
             }
 

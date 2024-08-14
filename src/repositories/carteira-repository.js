@@ -12,7 +12,7 @@ class CarteiraRepository {
                     transacao.valor, 
                     transacao.tipo_operacao,
                     transacao.descricao, 
-                    conta.saldo AS novo_saldo_conta_bancaria, 
+                    conta.saldo AS saldo_conta_bancaria, 
                     transacao.data_transacao,
                     (SELECT SUM(c.saldo)
                     FROM conta c 
