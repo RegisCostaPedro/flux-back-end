@@ -1,14 +1,18 @@
 const repository = require('../repositories/banco-repository');
 const ValidationContract = require('../validators/fluent-validator');
-
-
+const bancoService = require('../services/banco-transfeera-service')
+const authService = require('../services/auth-service')
 class BancoController {
 
     //Buscar todos os bancos
     static listarBancos = async (req, res) => {
 
         try {
-            const bancoList = await repository.get();
+            const token = req.body.token || req.query.token || req.headers['x-access-token'];
+            const dadosUsuario = await authService.decodeToken(token);
+          
+            // const bancoList = await repository.get();
+            const bancoList = await bancoService.returnListBanks(dadosUsuario);
 
             if (!bancoList) {
                 res.status(404).send({
@@ -24,6 +28,29 @@ class BancoController {
             })
         }
     };
+
+    static consultarBancos = async (req,res) => {
+        try {
+            const token = req.body.token || req.query.token || req.headers['x-access-token'];
+            const dadosUsuario = await authService.decodeToken(token);
+            const nomeInstituicao = req.body.instituicao
+            
+            const bancoList = await bancoService.returnListBanks(dadosUsuario,nomeInstituicao);
+
+            if (!bancoList) {
+                res.status(404).send({
+                    message: "Banco não encontrado"
+                });
+                return;
+            }
+
+            res.status(200).send(bancoList);
+        } catch (error) {
+            res.status(400).send({
+                message: "Falha ao processar requisição: " + error
+            })
+        }
+    }
 
     //Cadastrar banco
     static cadastrarBanco = async (req, res) => {
@@ -112,6 +139,8 @@ class BancoController {
             })
         }
     }
+
+  
 }
 
 module.exports = BancoController;

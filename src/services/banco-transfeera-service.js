@@ -6,12 +6,14 @@ const authService = require('../services/auth-service')
 require('dotenv').config();
 
 class BancoService {
-    static returnListBanks = async (USUARIO_TOKEN) => {
+    static returnListBanks = async (USUARIO_TOKEN,nomeInstituicao) => {
         try {
             const accessToken = await authServiceAPI.returnAccessToken();
+           
+
             const options = {
                 method: 'GET',
-                url: 'https://api-sandbox.transfeera.com/bank?pix=true',
+                url: `https://api-sandbox.transfeera.com/bank?pix=true`,
                 headers: {
                     accept: 'application/json',
                     'content-type': 'application/json',
@@ -20,8 +22,10 @@ class BancoService {
                 }
             };
 
-            // Faz a requisição para a API
+         // Faz a requisição para a API
             const response = await axios.request(options);
+        
+            console.log(options.url);
             return response.data; // Retorna a lista de bancos
 
         } catch (error) {
