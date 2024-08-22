@@ -24,8 +24,8 @@ class BancoService {
 
          // Faz a requisição para a API
             const response = await axios.request(options);
-        
-            console.log(options.url);
+            
+     
             return response.data; // Retorna a lista de bancos
 
         } catch (error) {

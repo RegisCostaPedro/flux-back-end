@@ -3,7 +3,7 @@ const { Sequelize, DataTypes, Model } = require('sequelize');
 const Usuario = require('./usuario');
 const Banco = require('./banco');
 
-class Conta extends Model {
+class ContaBancaria extends Model {
  
   static init(sequelize) {
     return super.init({
@@ -56,6 +56,6 @@ class Conta extends Model {
 
 }
 
-Conta.init(conexao);
+ContaBancaria.init(conexao);
 
-module.exports = Conta;
+module.exports = ContaBancaria;

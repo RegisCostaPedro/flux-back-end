@@ -1,5 +1,5 @@
 const { where } = require('sequelize');
-const Conta = require('../models/conta');
+const Conta = require('../models/conta-bancaria');
 const Usuario = require('../models/usuario');
 const Banco = require('../models/banco');
 

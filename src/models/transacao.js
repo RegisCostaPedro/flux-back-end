@@ -1,8 +1,9 @@
 const conexao = require('../config/database');
 const { Sequelize, DataTypes, Model } = require('sequelize');
-const Conta = require('./conta');
+const Conta = require('./conta-bancaria');
 const Usuario = require('./usuario');
 const Banco = require('./banco');
+const ContaBancos = require('./conta-bancos');
 
 class Transacao extends Model {
   static init(sequelize) {
@@ -13,12 +14,12 @@ class Transacao extends Model {
         primaryKey: true,
         autoIncrement: true
       },
-      conta_id: {
+      contaBancos_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: Conta,
-          key: 'id_conta',
+          model: ContaBancos,
+          key: 'id_contaBancos',
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         }
@@ -42,27 +43,8 @@ class Transacao extends Model {
         type: DataTypes.TEXT,
         allowNull: false
       },
-      usuario_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: Usuario,
-          key: 'id_usuario',
-          onDelete: 'CASCADE',
-          onUpdate: 'CASCADE'
-        }
-      },
-        banco_id: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
-          references: {
-            model: Banco,
-            key: 'id_banco',
-            onDelete: 'CASCADE',
-            onUpdate: 'CASCADE'
-          
-    },
-      }
+
+      
     }, {
       sequelize,
       modelName: 'Transacao',

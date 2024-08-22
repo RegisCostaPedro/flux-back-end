@@ -31,6 +31,14 @@ class Usuario extends Model {
       roles: {
         type: DataTypes.ENUM('usuario', 'admin'),
         allowNull: false
+      },
+      verifyCode:{
+        type: DataTypes.INTEGER(6),
+        allowNull: true,
+      },
+      status:{
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
       }
     }, {
       sequelize,

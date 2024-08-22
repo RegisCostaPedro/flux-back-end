@@ -1,4 +1,4 @@
-const Conta = require('../models/conta');
+const Conta = require('../models/conta-bancaria');
 const Transacao = require('../models/transacao');
 const Usuario = require('../models/usuario');
 
