@@ -39,6 +39,7 @@ class Usuario extends Model {
       status:{
         type: DataTypes.BOOLEAN,
         allowNull: true,
+        defaultValue: 0
       }
     }, {
       sequelize,

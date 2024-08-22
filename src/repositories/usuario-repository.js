@@ -8,13 +8,18 @@ class UsarioRepository {
         const res = await Usuario.findAll({
             attributes: ['nome', 'email', 'senha']
         });
+      
         return res;
     };
 
     // Buscar pelo id
     static getById = async (id) => {
         const res = await Usuario.findByPk(id);
-        return res;
+        if(!res){
+            return { message: 'Usuário não encontrado',  status: 404};
+        }
+        return { data:res , status: 200 };
+
 
     };
 
@@ -24,7 +29,6 @@ class UsarioRepository {
         return res;
 
     };
-
 
     //Cadastrar usuário
     static post = async (body) => {
@@ -39,14 +43,19 @@ class UsarioRepository {
 
     }
 
-
     //Atualizar usuário
     static put = async (id, body) => {
         const res = await Usuario.findByPk(id)
             .then(usuarioEncontrado => {
                 return usuarioEncontrado.update(body);
             });
-        return res;
+
+            if(!res){
+                return { message: "Erro ao atualizar usuário", status: 400 };
+            }
+
+         return { data: res, status: 201 };
+
     };
 
     //Deletar usuário
