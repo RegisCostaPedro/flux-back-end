@@ -1,8 +1,6 @@
 const conexao = require('../config/database');
 const { Sequelize, DataTypes, Model } = require('sequelize');
-const Conta = require('./conta-bancaria');
-const Usuario = require('./usuario');
-const Banco = require('./banco');
+
 const ContaBancos = require('./conta-bancos');
 
 class Transacao extends Model {
@@ -18,7 +16,7 @@ class Transacao extends Model {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: ContaBancos,
+          model: "conta_bancos",
           key: 'id_contaBancos',
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
@@ -32,11 +30,11 @@ class Transacao extends Model {
         type: DataTypes.DECIMAL(10, 5),
         allowNull: false,
         defaultValue: 0.00,
-      
+
       },
-    
+
       tipo_operacao: {
-        type: DataTypes.ENUM('entrada', 'retirada'),
+        type: DataTypes.ENUM('deposito', 'retirada', 'transferencia'),
         allowNull: false
       },
       descricao: {
@@ -44,7 +42,7 @@ class Transacao extends Model {
         allowNull: false
       },
 
-      
+
     }, {
       sequelize,
       modelName: 'Transacao',
@@ -53,6 +51,6 @@ class Transacao extends Model {
   }
 }
 
-Transacao.init(conexao);
+Transacao.init(conexao)
 
 module.exports = Transacao;

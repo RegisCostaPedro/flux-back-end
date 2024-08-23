@@ -1,7 +1,6 @@
 const conexao = require('../config/database');
 const { Sequelize, DataTypes, Model, DATE } = require('sequelize');
-const Usuario = require('./usuario');
-const Banco = require('./banco');
+
 
 class Pix extends Model {
   static init(sequelize) {
@@ -21,7 +20,7 @@ class Pix extends Model {
         type: Sequelize.ENUM('EMAIL', 'CNPJ', 'TELEFONE', 'CHAVE_ALEATORIA'),
         allowNull: false
       },
-    
+
       banco_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -36,23 +35,27 @@ class Pix extends Model {
         type: DataTypes.DATE,
         allowNull: false
       },
-      updated_at:{
+      updated_at: {
         type: DataTypes.DATE,
         allowNull: false
       },
       status: {
-        type: Sequelize.ENUM('VALIDANDO','PENDENTE','REGISTRADA','ERRO'),
+        type: Sequelize.ENUM('VALIDANDO', 'PENDENTE', 'REGISTRADA', 'ERRO'),
         allowNull: false
       }
-   
+
     }, {
       sequelize,
       modelName: 'Pix',
       tableName: 'pix'
     });
   }
+  static associate(models) {
+
+    this.hasMany(models.ContaBancos, { foreignKey: 'pix_id' });
+  }
 }
 
-Pix.init(conexao);
+// Pix.init(conexao);
 
 module.exports = Pix
