@@ -25,12 +25,12 @@ Caso as tebelas não estajam criadas descomente as linhas abaixo (linha 19-32)
    e elas serão criadas automaticamente  
    Você pode dar CTRL + D e repetir o mesmo atalho para selecionar todas as '//'  */
 
-//    const Usuario = require('./models/usuario');
-//    const Pix = require('./models/pix');
-//    const Banco = require('./models/banco');
-//    const Conta = require('./models/conta-bancaria');
-//    const Transacao = require('./models/transacao');
-//  const ContaBancos = require('./models/conta-bancos');
+// const Usuario = require('./models/index');
+// const Pix = require('./models/index')
+// const Banco = require('./models/index');
+// const Conta = require('./models/index')
+// const Transacao = require('./models/index');
+// const ContaBancos = require('./models/index');
 
 // Função imediata
 //  (async () => {
@@ -48,7 +48,7 @@ Caso as tebelas não estajam criadas descomente as linhas abaixo (linha 19-32)
 const indexRoute = require('./routes/index-route');
 const usuarioRoute = require('./routes/usuario-route');
 const bancoRoute = require('./routes/banco-route');
-const contaRoute = require('./routes/conta-route');
+const contaRoute = require('./routes/conta-bacaria-route');
 const pixRoute = require('./routes/pix-route');
 const homeRoute = require('./routes/home-route');
 const carteiraRoute = require('./routes/carteira-route')
@@ -57,10 +57,10 @@ const carteiraRoute = require('./routes/carteira-route')
 app.use('/', indexRoute);
 app.use(homeRoute);
 app.use(carteiraRoute);
-app.use('/login',usuarioRoute);
+app.use('/login', usuarioRoute);
 app.use('/flux', usuarioRoute);
 app.use('/banco', bancoRoute);
-app.use('/conta',contaRoute);
+app.use('/conta', contaRoute);
 app.use(pixRoute)
 
 
