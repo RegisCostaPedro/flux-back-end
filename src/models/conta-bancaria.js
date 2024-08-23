@@ -4,7 +4,7 @@ const Usuario = require('./usuario');
 const Banco = require('./banco');
 
 class ContaBancaria extends Model {
- 
+
   static init(sequelize) {
     return super.init({
       id_conta: {
@@ -37,7 +37,7 @@ class ContaBancaria extends Model {
         type: DataTypes.DECIMAL(10, 5),
         allowNull: false,
         defaultValue: 0.00,
-       
+
       },
       tipo_conta: {
         type: DataTypes.ENUM('corrente', 'poupanca', 'salario'),
@@ -47,9 +47,9 @@ class ContaBancaria extends Model {
     }, {
       sequelize,
       modelName: 'Conta',
-      tableName: 'conta'
+      tableName: 'conta-bancaria'
     });
-    
+
   }
 
 

@@ -4,6 +4,7 @@ const axios = require('axios');
 const pixAuthService = require('../services/auth-transfeera-service');
 const Usuario = require('../models/usuario');
 const Banco = require('../models/banco');
+const ContaBancos = require('../models/conta-bancos');
 require('dotenv').config();
 
 
@@ -12,10 +13,14 @@ class PixRepository {
     static get = async (usuario_ID_TOKEN) => {
         // Lista todas as contas pertencentes ao usuário
         const pixEncontrados = await Pix.findAll({
-            where: {
-                usuario_id: usuario_ID_TOKEN
-
-            }
+            include: [
+                {
+                    model: ContaBancos,
+                    where: {
+                        usuario_id: usuario_ID_TOKEN
+                    }
+                }
+            ]
         });
 
         // Verifica se a chave PIX foi encontrada no banco
@@ -126,30 +131,28 @@ class PixRepository {
         return { data: updatePix, status: 200 };
     }
 
-    static delete = async (idPix, usuario_id) => {
-        const chaveDeletada = await Pix.destroy(
-            {
-                id_pix: idPix,
-                where: {
-                    usuario_id: usuario_id
-                }
+    static delete = async (idPix) => {
+        const chaveDeletada = await Pix.destroy({
+            where: {
+                id_pix: idPix
             }
+        });
 
-        );
-        if (!chaveDeletada) {
+        if (chaveDeletada === 0) {
             return {
-                message: 'Erro ao deletar chave',
-                status: 400
+                message: 'Chave não encontrada ou não autorizada para exclusão',
+                status: 404
             };
         }
-        return { data: chaveDeletada, status: 204 };
+
+        return { status: 204 };
     }
 
-    static findByKey = async(key) => {
-        const chaveExistente  = Pix.findOne({
+    static findByKey = async (key) => {
+        const chaveExistente = Pix.findOne({
             key: key
         });
-        if(!chaveExistente){
+        if (!chaveExistente) {
             return {
                 message: 'Chave PIX fornecida já existe',
                 status: 409

@@ -1,10 +1,12 @@
 const conexao = require('../config/database');
 const { DataTypes, Model, Sequelize } = require('sequelize');
 const sequelize = require('../config/database');
-const Pix = require('../models/pix');
+
+const Transacao = require('./transacao');
 const Usuario = require('./usuario');
 const ContaBancaria = require('./conta-bancaria');
 const Banco = require('./banco');
+const Pix = require('./pix');
 
 class ContaBancos extends Model {
     static init(sequelize) {
@@ -15,9 +17,9 @@ class ContaBancos extends Model {
                 autoIncrement: true,
             },
             pix_id: {
-                type:  Sequelize.UUID,
-                allowNull: false, references: {
-                    model: Pix,
+                type: Sequelize.UUID,
+                allowNull: true, references: {
+                    model: 'pix',
                     key: 'id_pix',
                     onDelete: 'CASCADE',
                     onUpdate: 'CASCADE'
@@ -36,7 +38,7 @@ class ContaBancos extends Model {
             },
             contaBancaria_id: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
+                allowNull: true,
                 references: {
                     model: ContaBancaria,
                     key: 'id_conta',
@@ -46,7 +48,7 @@ class ContaBancos extends Model {
             },
             banco_id: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
+                allowNull: true,
                 references: {
                     model: Banco,
                     key: 'id_banco',
@@ -58,10 +60,10 @@ class ContaBancos extends Model {
         }, {
             sequelize,
             tableName: 'conta_bancos',
-            timestamps: false,
+            timestamps: true,
         });
     }
 }
 
-ContaBancos.init(conexao);
+
 module.exports = ContaBancos;

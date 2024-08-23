@@ -4,14 +4,16 @@ const axios = require('axios');
 const authServiceAPI = require('./auth-transfeera-service');
 const authService = require('../services/auth-service');
 const repository = require('../repositories/pix-repository');
+const { ContaBancos } = require('../models');
+const contaBancosRepository = require('../repositories/conta-bancos-repository')
 require('dotenv').config();
 
 class PixService {
 
     static criarChave = async (key_type, key, dadosUsuario, accessToken, banco_id) => {
         try {
-       
-            if(key_type){
+
+            if (key_type) {
                 //fazer logica para caso a chave seja cnpj, o aleatoria
             }
 
@@ -32,10 +34,10 @@ class PixService {
             const id_pix = createdKey.id;
 
             const chaveExistente = await repository.findByKey(createdKey.key);
-            
 
-            if(chaveExistente.status === 409){
-                return { status:  chaveExistente.status, message: response.data.statusCode };
+
+            if (chaveExistente.status === 409) {
+                return { status: chaveExistente.status, message: response.data.statusCode };
             }
             const pix = await repository.post({
                 id_pix,
@@ -44,12 +46,17 @@ class PixService {
                 usuario_id: dadosUsuario.id,
                 banco_id: banco_id
             });
+            const contaBancos = contaBancosRepository.post({
+                id_pix,
+                usuario_id: dadosUsuario.id
+
+            });
 
             if (pix.status === 200) {
                 return { status: 200, data: createdKey };
-            } else if(pix.status === 409){
+            } else if (pix.status === 409) {
                 return { status: pix.status || 500, message: response.data.statusCode };
-            }else{
+            } else {
                 return { status: pix.status || 500, message: response.data.statusCode };
             }
 
@@ -77,7 +84,6 @@ class PixService {
             }
         }
     }
-
 
 
     static verificarChave = async (idPix, emailUsuario, accessToken, verifyCode) => {
@@ -225,11 +231,10 @@ class PixService {
             }
         }
     }
-    
 
     static deletarChave = async (idPix, usuario_id, emailUsuario, accessToken) => {
-
         try {
+
             const options = {
                 method: 'DELETE',
                 url: `https://api-sandbox.transfeera.com/pix/key/${idPix}`,
@@ -240,36 +245,33 @@ class PixService {
                 }
             };
 
-    
-          const response = await axios.request(options);
-            
-          // Deleta a chave do banco de dados
-          const chaveDeletada = await repository.delete(idPix, usuario_id);
+            const response = await axios.request(options);
 
-          if (chaveDeletada.status === 204) {
-              return {
-                  status: 204,
-                  message: 'Chave deletada com sucesso'
-              };
-          } else {
-              return {
-                  status: chaveDeletada.status || 500,
-                  message: chaveDeletada.message || 'Erro ao deletar chave no banco de dados'
-              };
-          }
 
-        } catch (error) {
-            if (error.response && error.response.data) {
+            const [chaveDeletada, contaBancosDeletada] = await Promise.all([
+                repository.delete(idPix),
+                contaBancosRepository.deletePix(idPix, usuario_id)
+            ]);
+
+            if (chaveDeletada.status === 204 && contaBancosDeletada.status === 204) {
                 return {
-                    message: error.response.data.message,
-                    status: error.response.data.statusCode || 500
+                    status: 204,
+                    message: 'Chave e referências deletadas com sucesso'
                 };
             } else {
+
                 return {
-                    message: 'Erro interno do servidor',
-                    status: 500
+                    status: chaveDeletada.status || contaBancosDeletada.status || 500,
+                    message: chaveDeletada.message || contaBancosDeletada.message || 'Erro ao deletar chave ou referências'
                 };
             }
+
+        } catch (error) {
+            console.error(error);
+            return {
+                message: error.response ? error.response.data.message : 'Erro interno do servidor',
+                status: error.response ? error.response.status : 500
+            };
         }
     }
 }

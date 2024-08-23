@@ -4,13 +4,13 @@ const bancoService = require('../services/banco-transfeera-service')
 const authService = require('../services/auth-service')
 class BancoController {
 
-    //Buscar todos os bancos
+    //Buscar todos os bancos com transfeera api
     static listarBancos = async (req, res) => {
 
         try {
             const token = req.body.token || req.query.token || req.headers['x-access-token'];
             const dadosUsuario = await authService.decodeToken(token);
-          
+
             // const bancoList = await repository.get();
             const bancoList = await bancoService.returnListBanks(dadosUsuario);
 
@@ -29,13 +29,13 @@ class BancoController {
         }
     };
 
-    static consultarBancos = async (req,res) => {
+    static consultarBancos = async (req, res) => {
         try {
             const token = req.body.token || req.query.token || req.headers['x-access-token'];
             const dadosUsuario = await authService.decodeToken(token);
             const nomeInstituicao = req.body.instituicao
-            
-            const bancoList = await bancoService.returnListBanks(dadosUsuario,nomeInstituicao);
+
+            const bancoList = await bancoService.returnListBanks(dadosUsuario, nomeInstituicao);
 
             if (!bancoList) {
                 res.status(404).send({
@@ -94,15 +94,15 @@ class BancoController {
             const banco = await repository.put(req.params.id, req.body);
             console.log(banco);
             return res.status(201).send(banco);
-            
+
         } catch (error) {
             return res.status(500).send({
                 message: "Falha ao processar requisição " + error
-               
+
             });
         }
-     
-       
+
+
     }
 
     // Deletar Banco
@@ -140,7 +140,7 @@ class BancoController {
         }
     }
 
-  
+
 }
 
 module.exports = BancoController;

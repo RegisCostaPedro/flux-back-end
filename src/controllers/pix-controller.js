@@ -25,7 +25,7 @@ class PixController {
             } else {
                 return res.status((await response).data || 500).send({ message: (await response).message });
             }
-            
+
         } catch (error) {
             res.status(400).send({
                 message: "Falha ao processar requisição: " + error
@@ -67,7 +67,7 @@ class PixController {
         try {
 
             const idPix = req.params.id;
-            
+
 
             const token = req.body.token || req.query.token || req.headers['x-access-token'];
             const dadosUsuario = await authService.decodeToken(token);
@@ -168,6 +168,7 @@ class PixController {
             const usuario_id = dadosUsuario.id;
             const emailUsuario = dadosUsuario.email;
             const accessToken = await authServiceAPI.returnAccessToken();
+
             const response = await pixService.deletarChave(idPix, usuario_id, emailUsuario, accessToken);
 
             console.log(response.data);
@@ -179,6 +180,7 @@ class PixController {
             }
 
         } catch (error) {
+
             res.status(400).send({
                 message: "Falha ao processar requisição: " + error
             })
