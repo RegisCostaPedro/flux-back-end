@@ -104,7 +104,6 @@ class PixController {
             const pix = await repository.get(dadosUsuario.id);
 
             if (pix.status === 200) {
-
                 return res.status(pix.status).send(pix.data);
             } else {
 
@@ -124,32 +123,17 @@ class PixController {
             const idPix = req.params.id;
 
             const token = req.body.token || req.query.token || req.headers['x-access-token'];
-
-            // Decodifica o token
             const dadosUsuario = await authService.decodeToken(token);
-
+           
             const accessToken = await authServiceAPI.returnAccessToken();
 
-            const options = {
-                method: 'GET',
-                url: `https://api-sandbox.transfeera.com/pix/key/${idPix}`,
-                headers: {
-                    accept: 'application/json',
-                    'User-Agent': dadosUsuario.email,
-                    authorization: `Bearer ${accessToken}`
-                }
-            };
+            const response = await pixService.buscarChaveId(idPix, dadosUsuario, accessToken);
 
-            const response = await axios.request(options)
-                .then(function (response) {
-                    return res.status(200).send(response.data);
-                }).catch(function (error) {
-                    console.error(error);
-                });
-
-            if (!response) {
-                return res.status(400).send({ message: "Pix não encontrada ou inexistente" });
+    
+            if (response.status !== 200) {
+                return res.status(response.status).send(response.message);
             }
+            return res.status(response.status).send(response.data);
 
         } catch (error) {
             res.status(400).send({

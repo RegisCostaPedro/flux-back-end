@@ -16,8 +16,8 @@ class PixRepository {
             include: [
                 {
                     model: ContaBancos,
-                    where: {
-                        usuario_id: usuario_ID_TOKEN
+            where: {
+                    usuario_id: usuario_ID_TOKEN
                     }
                 }
             ]
@@ -97,17 +97,28 @@ class PixRepository {
         return { data: pixEncontrados, status: 200 };
     }
 
-    static findByPixId = async (pixKey_id) => {
+    static findByPixAndUserId = async (pixKey_id,usuario_id) => {
         // Procura todas as chaves pertencentes ao usuário
-        const pixEncontrados = await Pix.findOne({
-            where: {
-                id_pix: pixKey_id
-            }
+        const pixEncontrado = await Pix.findOne({
+            include: [
+                {
+                    model: ContaBancos,
+                    where: {
+                        pix_id: pixKey_id,
+                        usuario_id: usuario_id
+                    }
+                }
+            ]
         });
-        if (pixEncontrados) {
-            return { message: 'Chave Pix já registrada no banco de dados', status: 200, data: pixEncontrados };
+
+        if (!pixEncontrado || !pixEncontrado.ContaBancos || pixEncontrado.ContaBancos.length === 0) {
+            return {
+                message: 'Chave Pix não encontrada ou inexistente',
+                status: 404
+            };
         }
-        return { message: 'Chave Pix não encontrada', status: 404 };
+
+        return { data: pixEncontrado, status: 200 };
 
     }
 
@@ -133,18 +144,18 @@ class PixRepository {
 
     static delete = async (idPix) => {
         const chaveDeletada = await Pix.destroy({
-            where: {
-                id_pix: idPix
+            where:{
+                id_pix:idPix
             }
         });
-
+    
         if (chaveDeletada === 0) {
             return {
                 message: 'Chave não encontrada ou não autorizada para exclusão',
                 status: 404
             };
         }
-
+    
         return { status: 204 };
     }
 

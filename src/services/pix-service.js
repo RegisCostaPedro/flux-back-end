@@ -274,7 +274,71 @@ class PixService {
             };
         }
     }
-}
+
+
+    static buscarChaveId = async (idPix, dadosUsuario, accessToken) => {
+        try {
+            const emailUsuario = dadosUsuario.email;
+            const usuario_id = dadosUsuario.id;
+
+            const pixUser = await repository.findByPixAndUserId(idPix, usuario_id);
+
+            if (pixUser.status !== 200) {
+                return {
+                    message: pixUser.message,
+                    status: pixUser.status
+                };
+            }
+    
+            const contaBancos = pixUser.data.ContaBancos[0];
+            if (!contaBancos || contaBancos.length === 0) {
+                return {
+                    message: pixUser.message,
+                    status: pixUser.status
+                };
+            }
+            const pixId = contaBancos.pix_id;
+          
+            const options = {
+                method: 'GET',
+                url: `https://api-sandbox.transfeera.com/pix/key/${pixId}`,
+                headers: {
+                    accept: 'application/json',
+                    'User-Agent': emailUsuario,
+                    authorization: `Bearer ${accessToken}`
+                }
+            };
+            const response = await axios.request(options)
+
+            console.log('response: ', response.data);
+
+            if (pixUser.status === 200) {
+                return { data: response.data, status: pixUser.status }
+            } else {
+                return { message: pixUser.message, status: pixUser.status }
+            }
+
+
+        } catch (error) {
+            console.error('Error finding PIX key:', error);
+        //     // Pegando o erro vindo da API da Transfeera
+        //     if (error.response && error.response.data) {
+        //         return {
+        //             message: error.response.data.message,
+        //             status: error.response.data.statusCode || 500
+        //         };
+        //     } else {
+        //         return {
+        //             message: 'Erro interno do servidor',
+        //             status: 500
+        //         };
+        //     }
+         }
+    }
+
+
+};
+
 
 
 

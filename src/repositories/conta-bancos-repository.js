@@ -80,7 +80,7 @@ class ContaBancosRepository {
 
     // Buscar conta pelo ID dela
     static getById = async (id) => {
-        const res = await Conta.findByPk(id);
+        const res = await ContaBancos.findByPk(id);
         return res;
     };
 }
