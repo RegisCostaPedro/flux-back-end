@@ -9,7 +9,7 @@ class HomeRepository {
             .query(`
                 SELECT 
                 usuario.nome,
-                conta.id_conta,
+                conta_bancaria.id_conta,
                 transacao.valor,
                 transacao.tipo_operacao,
                 transacao.descricao,
@@ -17,11 +17,12 @@ class HomeRepository {
             FROM
                 transacao
                     JOIN
-                banco ON banco.id_banco = transacao.banco_id
+                conta_bancos ON conta_bancos.id_contaBancos = transacao.contaBancos_id
                     JOIN
-                conta ON conta.id_conta = transacao.conta_id
+                usuario ON usuario.id_usuario = conta_bancos.usuario_id
                     JOIN
-                usuario ON usuario.id_usuario = transacao.usuario_id
+                banco ON banco.id_banco = conta_bancos.banco_id
+                JOIN  conta_bancaria ON conta_bancaria.id_conta = conta_bancos.contaBancaria_id
             WHERE
                 usuario.id_usuario  = :id_user;   
     `, {
