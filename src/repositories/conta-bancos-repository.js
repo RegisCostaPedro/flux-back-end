@@ -10,7 +10,7 @@ class ContaBancosRepository {
     static get = async (usuario_id_TOKEN) => {
 
         // Lista todas as contas pertencente ao usário
-        const contaEncontrada = await Conta.findAll({
+        const contaEncontrada = await ContaBancos.findAll({
             where: {
                 usuario_id: usuario_id_TOKEN
             }
@@ -29,21 +29,46 @@ class ContaBancosRepository {
 
     }
 
+    static findOne = async(body)=>{
+        const contaEncontrada = await ContaBancos.findOne({
+            where: {
+                usuario_id:  body.usuario_id,
+                pix_id:  body.idPix 
+            }
+    
+        }
+        )
+       
+        if (!contaEncontrada) {
+            return {
+                message: 'Conta não encontrada ou inexistente',
+                status: 404
+            };
+        }
 
+        const res = contaEncontrada;
+        return { data: res, status: 200 };
+
+    }
     // relacionar o pix com a conta bancos
     static post = async (body) => {
 
-        console.log(body.id_pix);
-        console.log(body.id_pix);
+    
         const res = await ContaBancos.create({
             pix_id: body.id_pix,
             usuario_id: body.usuario_id,
-            contaBancaria_id: null,
-            banco_id: null,
+            contaBancaria_id: body.contaBancaria_id,
+            banco_id:  body.banco_id,
 
         });
+        if(!res){
+            return {
+                message: 'Erro ao vincular chave pix e conta bancaria',
+                status: 400
+            };
 
-        return { data: res, status: 201 };
+        }
+        return { data:`Chave vinculada com sucesso! \n ${res}`, status: 201 };
     }
 
     // atualizar conta bancaria do usuário
@@ -61,14 +86,14 @@ class ContaBancosRepository {
                 }
             });
 
-            if (res === 0) {
+            if(!res){
                 return {
-                    message: 'Nenhuma entrada correspondente encontrada na tabela ContaBancos',
-                    status: 404
+                    message: 'Erro deletar conta bancaria',
+                    status: 400
                 };
             }
 
-            return { status: 204 };
+            return { data: 'Conta bancaria deletada com sucesso!', status: 200 };
         } catch (error) {
             console.error(error);
             return {

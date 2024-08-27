@@ -25,22 +25,22 @@ Caso as tebelas não estajam criadas descomente as linhas abaixo (linha 19-32)
    e elas serão criadas automaticamente  
    Você pode dar CTRL + D e repetir o mesmo atalho para selecionar todas as '//'  */
 
-// const Usuario = require('./models/index');
-// const Pix = require('./models/index')
-// const Banco = require('./models/index');
-// const Conta = require('./models/index')
-// const Transacao = require('./models/index');
-// const ContaBancos = require('./models/index');
+//  const Usuario = require('./models/index');
+//  const Pix = require('./models/index')
+//  const Banco = require('./models/index');
+//  const Conta = require('./models/index')
+//  const Transacao = require('./models/index');
+//  const ContaBancos = require('./models/index');
 
-// Função imediata
-//  (async () => {
-//      try {
-//         await conexao.sync({ force: true });
-//        console.log('Todas as tabelas foram recriadas com sucesso!');
-//      } catch (err) {
-//        console.error('Erro ao recriar as tabelas:', err);
-//      }
-//  })();
+
+//   (async () => {
+//       try {
+//          await conexao.sync({ force: true });
+//         console.log('Todas as tabelas foram recriadas com sucesso!');
+//       } catch (err) {
+//         console.error('Erro ao recriar as tabelas:', err);
+//       }
+//   })();
 
 // AVISO ! APOS A COMPILAÇÃO COMENTE ESSAS LINHAS NOVAMENTE, SENÃO VOCÊ PODE PERDER TODO O CONTEUDO
 
@@ -48,7 +48,7 @@ Caso as tebelas não estajam criadas descomente as linhas abaixo (linha 19-32)
 const indexRoute = require('./routes/index-route');
 const usuarioRoute = require('./routes/usuario-route');
 const bancoRoute = require('./routes/banco-route');
-const contaRoute = require('./routes/conta-bacaria-route');
+const contaRoute = require('./routes/conta-bancaria-route');
 const pixRoute = require('./routes/pix-route');
 const homeRoute = require('./routes/home-route');
 const carteiraRoute = require('./routes/carteira-route')

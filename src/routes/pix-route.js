@@ -1,5 +1,4 @@
 const express = require('express');
-const app = require('../app');
 const controller = require('../controllers/pix-controller')
 const router = express.Router();
 const authService = require('../services/auth-service');

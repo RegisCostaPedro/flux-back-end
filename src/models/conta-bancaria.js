@@ -1,7 +1,6 @@
 const conexao = require('../config/database');
 const { Sequelize, DataTypes, Model } = require('sequelize');
-const Usuario = require('./usuario');
-const Banco = require('./banco');
+
 
 class ContaBancaria extends Model {
 
@@ -17,7 +16,7 @@ class ContaBancaria extends Model {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: Usuario,
+          model: 'usuario',
           key: 'id_usuario',
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
@@ -27,27 +26,28 @@ class ContaBancaria extends Model {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: Banco,
+          model: 'banco',
           key: 'id_banco',
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         }
       },
+      
       saldo: {
-        type: DataTypes.DECIMAL(10, 5),
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
         defaultValue: 0.00,
 
       },
       tipo_conta: {
-        type: DataTypes.ENUM('corrente', 'poupanca', 'salario'),
+        type: DataTypes.ENUM('CORRENTE', 'POUPANCA', 'SALARIO'),
         defaultValue: "salario",
         allowNull: false
       }
     }, {
       sequelize,
       modelName: 'Conta',
-      tableName: 'conta-bancaria'
+      tableName: 'conta_bancaria'
     });
 
   }

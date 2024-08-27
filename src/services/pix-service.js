@@ -4,18 +4,32 @@ const axios = require('axios');
 const authServiceAPI = require('./auth-transfeera-service');
 const authService = require('../services/auth-service');
 const repository = require('../repositories/pix-repository');
+const contaBancariaRepository = require('../repositories/conta-bancaria-repository')
 const { ContaBancos } = require('../models');
 const contaBancosRepository = require('../repositories/conta-bancos-repository')
 require('dotenv').config();
 
 class PixService {
 
-    static criarChave = async (key_type, key, dadosUsuario, accessToken, banco_id) => {
+    static criarChave = async (key_type, key, dadosUsuario, accessToken, banco_id, contaBancaria_id) => {
         try {
+            const usuario_id = dadosUsuario.id;
+            const key_typeUpCase = key_type.toUpperCase();
+            const chaveExistente = await repository.findByKey(key);
 
-            if (key_type) {
-                //fazer logica para caso a chave seja cnpj, o aleatoria
+            if (chaveExistente.status === 409) {
+                return { status: chaveExistente.status, message: response.data.statusCode };
             }
+
+            const contasBancariasDisponiveis = await contaBancariaRepository.findOne({ contaBancaria_id, usuario_id });
+
+
+            if (!contasBancariasDisponiveis.data) {
+                return { message: contasBancariasDisponiveis.message, status: contasBancariasDisponiveis.status };
+            }
+
+            const contaBancariaUsuario = contasBancariasDisponiveis.data.id_conta;
+
 
             const options = {
                 method: 'POST',
@@ -26,19 +40,13 @@ class PixService {
                     'user-Agent': dadosUsuario.email,
                     Authorization: `Bearer ${accessToken}`
                 },
-                data: { key, key_type }
+                data: { key: key, key_type: key_typeUpCase }
             };
 
             const response = await axios.request(options);
             const createdKey = response.data;
             const id_pix = createdKey.id;
 
-            const chaveExistente = await repository.findByKey(createdKey.key);
-
-
-            if (chaveExistente.status === 409) {
-                return { status: chaveExistente.status, message: response.data.statusCode };
-            }
             const pix = await repository.post({
                 id_pix,
                 key: createdKey.key,
@@ -46,14 +54,20 @@ class PixService {
                 usuario_id: dadosUsuario.id,
                 banco_id: banco_id
             });
-            const contaBancos = contaBancosRepository.post({
+            const contaBancos = await contaBancosRepository.post({
                 id_pix,
-                usuario_id: dadosUsuario.id
-
+                usuario_id: dadosUsuario.id,
+                contaBancaria_id: contaBancariaUsuario,
+                banco_id: banco_id
             });
 
-            if (pix.status === 200) {
-                return { status: 200, data: createdKey };
+            if (!contaBancos) {
+                return { message: contaBancos.message, status: contaBancos.status }
+            }
+
+
+            if (pix.status === 201) {
+                return { status: pix.status, data: createdKey };
             } else if (pix.status === 409) {
                 return { status: pix.status || 500, message: response.data.statusCode };
             } else {
@@ -84,7 +98,6 @@ class PixService {
             }
         }
     }
-
 
     static verificarChave = async (idPix, emailUsuario, accessToken, verifyCode) => {
         try {
@@ -234,6 +247,31 @@ class PixService {
 
     static deletarChave = async (idPix, usuario_id, emailUsuario, accessToken) => {
         try {
+            const contasBancariasDisponiveis = await contaBancosRepository.findOne({ idPix, usuario_id });
+
+
+            if (!contasBancariasDisponiveis || !contasBancariasDisponiveis.data) {
+                return {
+                    message: 'Conta bancária não encontrada ou inexistente',
+                    status: 404
+                };
+            }
+            const contaBancosUsuarioID = contasBancariasDisponiveis.data.usuario_id
+
+
+            if (!contasBancariasDisponiveis) {
+                return { message: contasBancariasDisponiveis.message, status: contasBancariasDisponiveis.status }
+            }
+
+
+            const contaBancosDelete = await contaBancosRepository.deletePix(idPix, contaBancosUsuarioID);
+            if (contaBancosDelete.status !== 200) {
+                return {
+                    message: contaBancosDelete.message,
+                    status: contaBancosDelete.status
+                }
+            }
+
 
             const options = {
                 method: 'DELETE',
@@ -247,26 +285,21 @@ class PixService {
 
             const response = await axios.request(options);
 
-
-            const [chaveDeletada, contaBancosDeletada] = await Promise.all([
-                repository.delete(idPix),
-                contaBancosRepository.deletePix(idPix, usuario_id)
-            ]);
-
-            if (chaveDeletada.status === 204 && contaBancosDeletada.status === 204) {
+            if (response && contaBancosDelete.status === 200) {
                 return {
-                    status: 204,
-                    message: 'Chave e referências deletadas com sucesso'
-                };
+                    data: contaBancosDelete.data,
+                    status: contaBancosDelete.status
+                }
             } else {
-
                 return {
-                    status: chaveDeletada.status || contaBancosDeletada.status || 500,
-                    message: chaveDeletada.message || contaBancosDeletada.message || 'Erro ao deletar chave ou referências'
-                };
+                    message: contaBancosDelete.message,
+                    status: contaBancosDelete.status
+                }
             }
 
-        } catch (error) {
+        }
+
+        catch (error) {
             console.error(error);
             return {
                 message: error.response ? error.response.data.message : 'Erro interno do servidor',
@@ -289,7 +322,7 @@ class PixService {
                     status: pixUser.status
                 };
             }
-    
+
             const contaBancos = pixUser.data.ContaBancos[0];
             if (!contaBancos || contaBancos.length === 0) {
                 return {
@@ -298,7 +331,7 @@ class PixService {
                 };
             }
             const pixId = contaBancos.pix_id;
-          
+
             const options = {
                 method: 'GET',
                 url: `https://api-sandbox.transfeera.com/pix/key/${pixId}`,
@@ -321,19 +354,19 @@ class PixService {
 
         } catch (error) {
             console.error('Error finding PIX key:', error);
-        //     // Pegando o erro vindo da API da Transfeera
-        //     if (error.response && error.response.data) {
-        //         return {
-        //             message: error.response.data.message,
-        //             status: error.response.data.statusCode || 500
-        //         };
-        //     } else {
-        //         return {
-        //             message: 'Erro interno do servidor',
-        //             status: 500
-        //         };
-        //     }
-         }
+            //   Pegando o erro vindo da API da Transfeera
+            if (error.response && error.response.data) {
+                return {
+                    message: error.response.data.message,
+                    status: error.response.data.statusCode || 500
+                };
+            } else {
+                return {
+                    message: 'Erro interno do servidor',
+                    status: 500
+                };
+            }
+        }
     }
 
 

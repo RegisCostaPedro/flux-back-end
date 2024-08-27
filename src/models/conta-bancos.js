@@ -1,12 +1,9 @@
-const conexao = require('../config/database');
-const { DataTypes, Model, Sequelize } = require('sequelize');
-const sequelize = require('../config/database');
 
-const Transacao = require('./transacao');
+const { DataTypes, Model, Sequelize } = require('sequelize');
 const Usuario = require('./usuario');
 const ContaBancaria = require('./conta-bancaria');
 const Banco = require('./banco');
-const Pix = require('./pix');
+
 
 class ContaBancos extends Model {
     static init(sequelize) {

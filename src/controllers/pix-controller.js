@@ -13,17 +13,25 @@ class PixController {
             const token = req.body.token || req.query.token || req.headers['x-access-token'];
             const dadosUsuario = await authService.decodeToken(token);
             const banco_id = req.body.banco_id
+            const contaBancaria_id = req.body.conta_bancaria_id
             const { key_type, key } = req.body;
+
 
             const accessToken = await authServiceAPI.returnAccessToken();
 
-            const response = pixService.criarChave(key_type, key, dadosUsuario, accessToken, banco_id);
+            const response = await pixService.criarChave(
+                key_type,
+                key,
+                dadosUsuario,
+                accessToken,
+                banco_id,
+                contaBancaria_id);
 
 
-            if ((await response).status === 200) {
-                return res.status(200).send((await response).data);
+            if (response.status === 201) {
+                return res.status(response.status).send(response.data);
             } else {
-                return res.status((await response).data || 500).send({ message: (await response).message });
+                return res.status(response.status).send({ message: response.message });
             }
 
         } catch (error) {
@@ -124,12 +132,12 @@ class PixController {
 
             const token = req.body.token || req.query.token || req.headers['x-access-token'];
             const dadosUsuario = await authService.decodeToken(token);
-           
+
             const accessToken = await authServiceAPI.returnAccessToken();
 
             const response = await pixService.buscarChaveId(idPix, dadosUsuario, accessToken);
 
-    
+
             if (response.status !== 200) {
                 return res.status(response.status).send(response.message);
             }
@@ -157,8 +165,8 @@ class PixController {
 
             console.log(response.data);
 
-            if (response.status === 204) {
-                return res.status(204).send(response.data);
+            if (response.status === 200) {
+                return res.status(response.status).send(response.data);
             } else {
                 return res.status(response.status).send({ message: response.message });
             }

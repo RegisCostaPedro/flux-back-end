@@ -2,6 +2,7 @@ const { where } = require('sequelize');
 const Conta = require('../models/conta-bancaria');
 const Usuario = require('../models/usuario');
 const Banco = require('../models/banco');
+const { stack } = require('../app');
 
 class ContaRepository {
 
@@ -31,12 +32,14 @@ class ContaRepository {
     // cadastrar conta bancaria
     static post = async (body) => {
 
-        const usuario = await Usuario.findByPk(body.usuario_id);
-        const banco = await Banco.findByPk(body.banco_id);
+        const tipo_conta = body.tipo_conta.toUpperCase();
+        const usuario = await Usuario.findByPk(body.fkUsuarioId);
+        const banco = await Banco.findByPk(body.fkBancoId);
+
 
         if (!usuario) {
             return {
-                message: `O usuário com o ID ${body.usuario_id} não foi encontrado`,
+                message: `O usuário com o ID ${body.fkUsuarioId} não foi encontrado`,
                 status: 404
             };
 
@@ -45,11 +48,12 @@ class ContaRepository {
             return { message: "Banco não encontrado", status: 404 };
         }
 
+
         const res = await Conta.create({
-            usuario_id: body.usuario_id,
-            banco_id: body.banco_id,
+            usuario_id: body.fkUsuarioId,
+            banco_id: body.fkBancoId,
             saldo: body.saldo,
-            tipo_conta: body.tipo_conta
+            tipo_conta: tipo_conta
         });
 
         return { data: res, status: 201 };
@@ -63,8 +67,9 @@ class ContaRepository {
     // deletar conta bancaria do usuário
     static delete = async (id, usuario_id_TOKEN) => {
         // Verifica se existe o usuario no banco e passado pelo token 
-        const usuario = await Conta.findByPk(usuario_id_TOKEN);
-        const banco = await Conta.findByPk(usuario_id_TOKEN);
+        const usuario_id = usuario_id_TOKEN
+        const usuario = await Conta.findOne({where:{usuario_id}});
+        const banco = await Conta.findOne({where:{usuario_id}});
 
         if (!usuario) {
             return {
@@ -77,40 +82,54 @@ class ContaRepository {
             return { message: "Banco não encontrado", status: 404 };
         }
 
+
         // Verifica se a conta existe no banco
-        const contaEncontrada = await Conta.findByPk(id);
+        const contaEncontrada = await Conta.findOne({where:{id_conta :id,
+            usuario_id: usuario_id
+        }});
         if (!contaEncontrada) {
             return {
                 message: 'Conta não encontrada ou inexistente',
                 status: 404
             };
         }
+        //  verifica se a conta pertence a um usuario
+        if (contaEncontrada.usuario_id !== usuario_id) {
+            return {
+                message: 'Esta conta não pertence a você',
+                status: 403
+            };
+        }
+        await contaEncontrada.destroy();
 
-        const conta = await Conta.findByPk(id).
-            then(async contaEncontrada => {
-
-                // verifica se a conta pertence a um usuario
-                if (contaEncontrada.usuario_id !== usuario) {
-                    return { message: 'Esta conta já pertence a um usuário', status: 403 }
-                }
-
-                if (!contaEncontrada || contaEncontrada === null) {
-                    return { message: 'Conta não encontrada ou inexistente', status: 404 }
-                }
-
-                contaEncontrada.destroy(id);
-                const res = contaEncontrada;
-                return { data: res, status: 200 }
-            });
-
-        return conta;
+        return { 
+            message: 'Conta deletada com sucesso.', 
+            status: 200
+        }
     }
+    // Buscar uma conta bancaira do usuário
+    static findOne = async (body) => {
 
+        const res = await Conta.findOne({
+            where: {
+                id_conta: body.contaBancaria_id,
+                usuario_id: body.usuario_id
+            }
+        });
 
-    // Buscar conta pelo ID dela
+        if (!res || res === null || res === undefined) {
+            return { message: "Você não possui contas bancarias registradas", status: 404 }
+        }
+        return { data: res, status: 200 };
+    };
+    // Buscar conta bancaira pelo PK dela
     static getById = async (id) => {
         const res = await Conta.findByPk(id);
-        return res;
+
+        if (!res || res === null || res === undefined) {
+            return { message: "Você não possui contas bancarias criadas", status: 404 }
+        }
+        return { data: res, status: 200 };
     };
 }
 module.exports = ContaRepository;

@@ -7,8 +7,6 @@ const Banco = require('../models/banco');
 const ContaBancos = require('../models/conta-bancos');
 require('dotenv').config();
 
-
-
 class PixRepository {
     static get = async (usuario_ID_TOKEN) => {
         // Lista todas as contas pertencentes ao usuário
@@ -39,6 +37,8 @@ class PixRepository {
             const usuario = await Usuario.findByPk(body.usuario_id);
             const banco = await Banco.findByPk(body.banco_id);
 
+            const key_type= body.key_type.toUpperCase()
+  
             if (!usuario) {
                 return {
                     message: `O usuário não encontrado`,
@@ -51,21 +51,21 @@ class PixRepository {
             }
             // Cria a nova entrada na tabela Pix
             const pix = await Pix.create({
-                id_pix: body.id_pix,
+                id_pix: body.id_pix ,
                 key: body.key,
-                key_type: body.key_type,
+                key_type: key_type,
                 usuario_id: body.usuario_id,
                 banco_id: body.banco_id,
                 created_at: new Date(),
                 updated_at: new Date(),
-                status: "VALIDANDO"
+                status:  key_type == "CNPJ" || key_type == "CHAVE_ALEATORIA" ? "REGISTRADA" : "VALIDANDO"
             });
 
             if (!pix) {
                 return { status: 400, message: 'Erro ao criar chave PIX' };
             }
 
-            return { data: pix, status: 200 };
+            return { data: pix, status: 201 };
         } catch (error) {
             console.error('Error creating PIX entry:', error);
             return {
@@ -156,17 +156,17 @@ class PixRepository {
             };
         }
     
-        return { status: 204 };
+        return { status: 200 };
     }
 
     static findByKey = async (key) => {
         const chaveExistente = Pix.findOne({
-            key: key
+           where:{ key: key}
         });
         if (!chaveExistente) {
             return {
                 message: 'Chave PIX fornecida já existe',
-                status: 409
+                status: 400
             };
         }
         return { data: chaveExistente, status: 200 };
