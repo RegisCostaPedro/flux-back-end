@@ -5,7 +5,7 @@ class TransacaoService {
 
 
     static listarDadosHome = async (id_user, usuario_nome_token) => {
-        const query = await homeRepository.get(id_user);
+        const query = await homeRepository.getHomeData(id_user);
         if (!query || query.data == null || query.data.length === 0) {
             return { status: 204, nome_usuario: usuario_nome_token, message: "Você ainda não realizou transações" };
         }
@@ -18,7 +18,7 @@ class TransacaoService {
     static listarHistoricoTransacao = async (id_user) => {
         var query = await cateiraRepository.get(id_user);
 
-        if (!query || query.length === 0) {
+        if (!query || query.data.length === 0) {
             return {
                 status: 204, message: "Você ainda não realizou transações"
             };
@@ -34,6 +34,7 @@ class TransacaoService {
                 return {
                     ...transacao,
                     porcentagem: `${aumentoPorcent.toFixed(2)}%`
+                    
                 }
             }
             else if (tipo_operacao == 'retirada') {
@@ -43,10 +44,11 @@ class TransacaoService {
                 return {
                     ...transacao,
                     porcentagem: `${diminuicaoPorcent.toFixed(2)}%`
+                    
                 }
             }
-
-        });
+            return ;
+        }).filter(transacao => transacao !== undefined);
 
         return { status: 200, data: resultPorcentAndQuery };
 

@@ -48,11 +48,11 @@ Caso as tebelas não estajam criadas descomente as linhas abaixo (linha 19-32)
 const indexRoute = require('./routes/index-route');
 const usuarioRoute = require('./routes/usuario-route');
 const bancoRoute = require('./routes/banco-route');
-const contaRoute = require('./routes/conta-bancaria-route');
+const contaBancariaRoute = require('./routes/conta-bancaria-route');
 const pixRoute = require('./routes/pix-route');
 const homeRoute = require('./routes/home-route');
 const carteiraRoute = require('./routes/carteira-route')
-
+const contaBancosRoute = require('./routes/conta-bancos-route')
 // rotas de acesso 
 app.use('/', indexRoute);
 app.use(homeRoute);
@@ -60,7 +60,7 @@ app.use(carteiraRoute);
 app.use('/login', usuarioRoute);
 app.use('/flux', usuarioRoute);
 app.use('/banco', bancoRoute);
-app.use('/conta', contaRoute);
+app.use('/conta', contaBancariaRoute,contaBancosRoute);
 app.use(pixRoute)
 
 

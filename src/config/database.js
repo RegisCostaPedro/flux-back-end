@@ -6,7 +6,7 @@ e o segundo parâmetro é a senha do seu banco */
 
 const conexao = new Sequelize('flux_db', 'root', '', {
     host: 'localhost',
-    dialect: 'mysql',
+   dialect: 'mysql',
     define: {
         timestamps: false,
         freezeTableName: true

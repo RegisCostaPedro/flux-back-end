@@ -41,12 +41,16 @@ class Transacao extends Model {
         type: DataTypes.TEXT,
         allowNull: false
       },
-
+      conta_bancos_destino_id:{
+        type: DataTypes.INTEGER,
+        allowNull: true
+      }
 
     }, {
       sequelize,
       modelName: 'Transacao',
-      tableName: 'transacao'
+      tableName: 'transacao',
+      timestamps:true
     });
   }
 }
