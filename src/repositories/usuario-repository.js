@@ -1,3 +1,4 @@
+const { where } = require('sequelize');
 const Usuario = require('../models/usuario');
 const bcrypt = require('bcrypt');
 
@@ -5,20 +6,18 @@ class UsarioRepository {
 
     //Buscar todos usuários
     static get = async () => {
-        const res = await Usuario.findAll({
-            attributes: ['nome', 'email', 'senha']
-        });
-      
+        const res = await Usuario.findAll();
+
         return res;
     };
 
     // Buscar pelo id
     static getById = async (id) => {
         const res = await Usuario.findByPk(id);
-        if(!res){
-            return { message: 'Usuário não encontrado',  status: 404};
+        if (!res) {
+            return { message: 'Usuário não encontrado', status: 404 };
         }
-        return { data:res , status: 200 };
+        return { data: res, status: 200 };
 
 
     };
@@ -33,7 +32,7 @@ class UsarioRepository {
     //Cadastrar usuário
     static post = async (body) => {
         const usuario = await Usuario.create(body);
-        
+
         if (!usuario) {
             return { message: "Erro ao criar usuário", status: 400 };
         }
@@ -50,29 +49,25 @@ class UsarioRepository {
                 return usuarioEncontrado.update(body);
             });
 
-            if(!res){
-                return { message: "Erro ao atualizar usuário", status: 400 };
-            }
+        if (!res) {
+            return { message: "Erro ao atualizar usuário", status: 400 };
+        }
 
-         return { data: res, status: 201 };
+        return { data: res, status: 201 };
 
     };
 
     //Deletar usuário
     static delete = async (id) => {
-        const res = await Usuario.findByPk(id)
-            .then(usuarioEncontrado => {
-                if (!usuarioEncontrado || usuarioEncontrado === null) {
-                    console.log('Usuário não encontrado');
-                }
-                return usuarioEncontrado.destroy({
-                    where: {
-                        id
-                    }
-                });
-            });
+        const res = await Usuario.findOne({where:{id_usuario: id}})
+        const usuarioEncontrado = await Usuario.findOne({ where: { id_usuario: id } });
 
-        return res;
+        if (!usuarioEncontrado) {
+            return { message: 'Usuário não encontrado', status: 404 };
+        }
+
+        await usuarioEncontrado.destroy();
+        return { message: 'Usuário deletado com sucesso!', status: 200}
     };
 
     //Autenticar usuário (login)

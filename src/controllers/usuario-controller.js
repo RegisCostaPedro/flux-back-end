@@ -18,9 +18,9 @@ class UsuarioController {
             // Decodifica o token
             const data = await authService.decodeToken(token);
 
+            const id_usuario = data.id;
+            const usuarioList = await service.get(id_usuario);
 
-            const usuarioList = await service.get(data);
-            
 
             if (!usuarioList.data) {
                 return res.status(usuarioList.status).send({
@@ -51,16 +51,16 @@ class UsuarioController {
 
             // const usuario = await service.getById(data.id);
             const usuario = await service.getById(id);
-      
+
 
             if (!usuario.data) {
-                return  res.status(usuario.status).send({
-                    message:  usuario.message
+                return res.status(usuario.status).send({
+                    message: usuario.message
                 });
-               
+
             }
 
-           return res.status(usuario.status).send(usuario.data);
+            return res.status(usuario.status).send(usuario.data);
         } catch (error) {
             res.status(400).send({
                 message: "Falha ao processar requisição: " + error
@@ -108,14 +108,26 @@ class UsuarioController {
     static atualizarUsuario = async (req, res) => {
 
         try {
-          
+            let contract = new ValidationContract();
+            contract.hasMinLen(req.body.nome, 3, 'O nome deve conter pelo menos 3 caracteres');
+            contract.hasMinLen(req.body.cpf, 14, 'O cpf deve conter pelo menos 13 caracteres');
+            contract.hasMaxLen(req.body.cpf, 14, 'O cpf deve ter no máximo 13 caracteres');
+            contract.isEmail(req.body.email, 'Email inválido');
+            contract.hasMinLen(req.body.senha, 3, 'O senha deve conter pelo menos 3 caracteres');
+
+            if (!contract.isValid()) {
+                res.status(400).send(contract.errors()).end();
+                return;
+            }
+
+
             const usuario = await service.update(req.params.id, req.body);
 
             if (usuario.status === 201) {
-                res.status(201).send(usuario.data);
+                return res.status(201).send(usuario.data);
             } else {
-                res.status(usuario.status).send({ message: usuario.message });
-            }            return res.status(201).send(usuario);
+                return res.status(usuario.status).send({ message: usuario.message });
+            }
 
         } catch (error) {
             return res.status(500).send({
@@ -127,11 +139,10 @@ class UsuarioController {
     //Deletar usuário
     static deletarUsuario = async (req, res) => {
         try {
-            const usuario = await repository.delete(req.params.id);
+            const resultado = await repository.delete(req.params.id);
 
-            return res.status(200).send({
-                message: "Usuário deletado com sucesso!"
-            });
+            return res.status(resultado.status).json({ message: resultado.message });
+           
         } catch (error) {
             res.status(404).send({
                 message: "Falha ao processar requisição"
