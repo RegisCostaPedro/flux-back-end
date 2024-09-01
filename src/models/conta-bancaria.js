@@ -41,7 +41,7 @@ class ContaBancaria extends Model {
       },
       tipo_conta: {
         type: DataTypes.ENUM('CORRENTE', 'POUPANCA', 'SALARIO'),
-        defaultValue: "salario",
+        defaultValue: "SALARIO",
         allowNull: false
       }
     }, {

@@ -53,8 +53,13 @@ class ContaBancos extends Model {
                     onUpdate: 'CASCADE'
                 }
             },
-
-        }, {
+            status:{
+                type: DataTypes.ENUM('ATIVO','INATIVO'),
+                allowNull: false,
+                defaultValue: 'ATIVO'
+            },
+        },
+         {
             sequelize,
             tableName: 'conta_bancos',
             timestamps: true,

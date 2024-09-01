@@ -1,10 +1,9 @@
-const { where } = require('sequelize');
+
 const Conta = require('../models/conta-bancaria');
 const Usuario = require('../models/usuario');
 const Banco = require('../models/banco');
-const { stack } = require('../app');
-
-class ContaRepository {
+const ContaBancos = require('../models/conta-bancos');
+class ContaBancariaRepository {
 
     // listar contas bancarias  do usuario
     static get = async (usuario_id_TOKEN) => {
@@ -60,16 +59,38 @@ class ContaRepository {
     }
 
     // atualizar conta bancaria do usuário
-    static put = async (id, novoSaldo) => {
-        return await Conta.update({ saldo: novoSaldo }, { where: { id_conta: id } });
+    static put = async (contaBancaria_id, novoSaldo, usuario_id) => {
+
+        const contaEncontrada = await Conta.findByPk(contaBancaria_id);
+
+        if (!contaEncontrada) {
+            return { message: 'Conta não encontrada', status: 404 };
+        }
+
+        const res = await contaEncontrada.update({ saldo: novoSaldo });
+
+        return { data: res, status: 200 };
+
     }
+
+    static putDestinyAccount = async (banco_de_destino_id, novoSaldo) => {
+
+        if (banco_de_destino_id === undefined || banco_de_destino_id === null) {
+            return null;
+        }
+
+        return await Conta.update({ saldo: novoSaldo },
+            { where: { id_conta: banco_de_destino_id } });
+
+    }
+
 
     // deletar conta bancaria do usuário
     static delete = async (id, usuario_id_TOKEN) => {
         // Verifica se existe o usuario no banco e passado pelo token 
         const usuario_id = usuario_id_TOKEN
-        const usuario = await Conta.findOne({where:{usuario_id}});
-        const banco = await Conta.findOne({where:{usuario_id}});
+        const usuario = await Conta.findOne({ where: { usuario_id } });
+        const banco = await Conta.findOne({ where: { usuario_id } });
 
         if (!usuario) {
             return {
@@ -84,9 +105,12 @@ class ContaRepository {
 
 
         // Verifica se a conta existe no banco
-        const contaEncontrada = await Conta.findOne({where:{id_conta :id,
-            usuario_id: usuario_id
-        }});
+        const contaEncontrada = await Conta.findOne({
+            where: {
+                id_conta: id,
+                usuario_id: usuario_id
+            }
+        });
         if (!contaEncontrada) {
             return {
                 message: 'Conta não encontrada ou inexistente',
@@ -102,8 +126,8 @@ class ContaRepository {
         }
         await contaEncontrada.destroy();
 
-        return { 
-            message: 'Conta deletada com sucesso.', 
+        return {
+            message: 'Conta deletada com sucesso.',
             status: 200
         }
     }
@@ -132,4 +156,4 @@ class ContaRepository {
         return { data: res, status: 200 };
     };
 }
-module.exports = ContaRepository;
+module.exports = ContaBancariaRepository;

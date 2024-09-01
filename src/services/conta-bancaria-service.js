@@ -1,10 +1,10 @@
-const Conta = require('../models/conta-bancaria');
+const ContaBancaria = require('../models/conta-bancaria');
 const Transacao = require('../models/transacao');
 const Usuario = require('../models/usuario');
 
 const repository = require('../repositories/conta-bancaria-repository');
 const ContaBancosrepository = require('../repositories/conta-bancos-repository');
-
+const sequelize = require('../config/database')
 
 class ContaBancariaService {
 
@@ -12,13 +12,19 @@ class ContaBancariaService {
     static criarContaBancaria = async (fkUsuarioId, fkBancoId, tipo_conta, saldo) => {
         try {
 
-            const contaBancaria = await repository.post({fkUsuarioId, fkBancoId, tipo_conta, saldo})
-            
-            if(!contaBancaria){
-                return {message: contaBancaria.message, status: contaBancaria.status}
+            if (tipo_conta !== "POUPANCA" && tipo_conta !== "CORRENTE" && tipo_conta !== "SALARIO") {
+                return { message: "Tipo de conta bancária inválida", status: 400 }
             }
 
-            return {data: contaBancaria.data, status: contaBancaria.status}
+
+            const contaBancaria = await repository.post({ fkUsuarioId, fkBancoId, tipo_conta, saldo })
+
+
+            if (!contaBancaria.data) {
+                return { message: contaBancaria.message, status: contaBancaria.status }
+            }
+
+            return { data: contaBancaria.data, status: contaBancaria.status }
 
         } catch (error) {
             return {
@@ -29,64 +35,72 @@ class ContaBancariaService {
 
     }
 
-    static atualizarSaldo = async (contaID, valor, fkUsuarioId, descricao, fkBancoId) => {
+    static atualizarSaldo = async (contaID, valor, fkUsuarioId, descricao, fkBancoId, contaBancos_id) => {
         try {
             const t = await sequelize.transaction();
-            const contaBancariaEncontrada = await Conta.findByPk(contaID);
+            const contaBancariaEncontrada = await ContaBancaria.findOne({
+                where: {
+                    id_conta: contaID,
+                    usuario_id: fkUsuarioId
+                }
+            }
+            );
 
             if (!contaBancariaEncontrada) {
+                await t.rollback()
                 return { message: 'Conta não encontrada ou inexistente', status: 404 };
             }
-    
+
             const usuario = await Usuario.findByPk(fkUsuarioId);
-    
-            // console.log(usuario.id_usuario);
-            // console.log(fkUsuarioId);
-    
+
             if (!usuario) {
-                
+                await t.rollback();
                 return { message: `Você ainda não possui uma conta bancária para atualizá-la`, status: 404 };
             }
-    
-    
+
+
             if (contaBancariaEncontrada.usuario_id !== usuario.id_usuario) {
                 await t.rollback();
                 return { message: 'Esta conta já pertence a um usuário', status: 403 };
             }
-    
+
             const conta = await repository.getById(contaID);
-    
-   
+
+
             if (!conta) {
                 await t.rollback();
-                return { message:conta.message, status:  conta.status};
+                return { message: conta.message, status: conta.status };
             }
-    
-            const saldoAtual = parseFloat(conta.saldo);
-    
+
+            const saldoAtual = parseFloat(conta.data.saldo);
+
             const novoSaldo = saldoAtual + parseFloat(valor);
-    
-    
+
+
             if (novoSaldo < 0) {
                 return { message: 'Saldo insuficiente', status: 400 };
             }
-    
-            conta.saldo = novoSaldo;
-            await repository.put(contaID, novoSaldo);
-    
-            const tipoOperacao = valor >= 0 ? 'entrada' : 'retirada';
-          
-            await Transacao.create({
+
+            const saldoAtualizado = await repository.put(contaID, novoSaldo, fkUsuarioId);
+            const tipoOperacao = valor >= 0 ? 'deposito' : 'retirada';
+
+            const transacao = await Transacao.create({
                 conta_id: contaID,
                 valor: valor,
                 data_transacao: new Date(),
                 tipo_operacao: tipoOperacao,
                 descricao: descricao,
                 usuario_id: fkUsuarioId,
-                banco_id: fkBancoId
+                banco_id: fkBancoId,
+                contaBancos_id: contaBancos_id
             }, { transaction: t });
-            return { data: conta, status: 201 };
-    
+
+            await t.commit();
+
+
+            return { data: saldoAtualizado.data.previous, status: 201 };
+
+
         } catch (error) {
             return {
                 message: "Falha na requisição" + error,
@@ -96,7 +110,7 @@ class ContaBancariaService {
 
     }
 
-     
+
 }
 
 module.exports = ContaBancariaService;
