@@ -1,6 +1,6 @@
 const repository = require('../repositories/conta-bancaria-repository');
 const authService = require('../services/auth-service');
-const service = require('../services/Conta-bancaria-service.js');
+const service = require('../services/conta-bancaria-service.js');
 
 class ContaController {
 
@@ -39,7 +39,6 @@ class ContaController {
             const tipo_conta = req.body.tipo_conta
             const fkUsuarioId = dadosUsuario.id;
             const fkBancoId = req.body.banco_id;
-
 
 
 

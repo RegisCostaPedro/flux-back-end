@@ -1,8 +1,7 @@
-
 const Conta = require('../models/conta-bancaria');
 const Usuario = require('../models/usuario');
 const Banco = require('../models/banco');
-const ContaBancos = require('../models/conta-bancos');
+
 class ContaBancariaRepository {
 
     // listar contas bancarias  do usuario
@@ -59,7 +58,7 @@ class ContaBancariaRepository {
     }
 
     // atualizar conta bancaria do usuário
-    static put = async (contaBancaria_id, novoSaldo, usuario_id) => {
+    static put = async (contaBancaria_id, novoSaldo,fkUsuarioId) => {
 
         const contaEncontrada = await Conta.findByPk(contaBancaria_id);
 
@@ -72,18 +71,6 @@ class ContaBancariaRepository {
         return { data: res, status: 200 };
 
     }
-
-    static putDestinyAccount = async (banco_de_destino_id, novoSaldo) => {
-
-        if (banco_de_destino_id === undefined || banco_de_destino_id === null) {
-            return null;
-        }
-
-        return await Conta.update({ saldo: novoSaldo },
-            { where: { id_conta: banco_de_destino_id } });
-
-    }
-
 
     // deletar conta bancaria do usuário
     static delete = async (id, usuario_id_TOKEN) => {
@@ -133,7 +120,7 @@ class ContaBancariaRepository {
     }
     // Buscar uma conta bancaira do usuário
     static findOne = async (body) => {
-
+       
         const res = await Conta.findOne({
             where: {
                 id_conta: body.contaBancaria_id,
@@ -141,9 +128,9 @@ class ContaBancariaRepository {
             }
         });
 
-        if (!res || res === null || res === undefined) {
-            return { message: "Você não possui contas bancarias registradas", status: 404 }
-        }
+          if (!res) {
+        return { message: "Você não possui contas bancarias registradas", status: 404 }
+    }
         return { data: res, status: 200 };
     };
     // Buscar conta bancaira pelo PK dela

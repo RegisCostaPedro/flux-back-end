@@ -2,12 +2,14 @@ const ContaBancaria = require('../models/conta-bancaria');
 const Transacao = require('../models/transacao');
 const Usuario = require('../models/usuario');
 const contaBancariaRepository = require('../repositories/conta-bancaria-repository');
-const ContaBancosrepository = require('../repositories/conta-bancos-repository');
+const contaBancosrepository = require('../repositories/conta-bancos-repository');
 const pixRepository = require('../repositories/pix-repository');
 const sequelize = require('../config/database');
 const { ContaBancos } = require('../models');
 const { where } = require('sequelize');
 const contaBancariaService = require('../services/conta-bancaria-service');
+const { verify } = require('jsonwebtoken');
+const ContaBancosRepository = require('../repositories/conta-bancos-repository');
 
 class ContaBancosService {
 
@@ -37,8 +39,6 @@ class ContaBancosService {
 
             if (!id_conta_bancaria_destino) {
 
-
-
                 const saldoContaAtualizado = await contaBancariaService.atualizarSaldo(
                     conta_bancaria_origem_id,
                     valor_transferencia,
@@ -50,7 +50,7 @@ class ContaBancosService {
                     await t.rollback();
                     return { message: saldoContaAtualizado.message, status: saldoContaAtualizado.status };
                 }
-                
+
                 const novoSaldo = saldoContaAtualizado.data.saldo;
                 const contaAtualizada = await contaBancariaRepository.put(conta_bancaria_origem_id, novoSaldo, fkUsuarioId);
                 await t.commit();
@@ -58,24 +58,29 @@ class ContaBancosService {
 
 
             } else {
-                const contaDestino = await ContaBancaria.findOne({ where: { id_conta: id_conta_bancaria_destino } });
+
+                const contaDestino = await ContaBancosService.buscarContaBancaria(id_conta_bancaria_destino, fkUsuarioId);
 
                 if (!contaDestino) {
                     await t.rollback();
                     return { message: 'Conta de destino não encontrada', status: 404 };
                 }
 
+
                 const saldoAtual = parseFloat(contaBancaria.data.saldo);
                 const novoSaldoOrigem = saldoAtual - parseFloat(valor_transferencia);
-                const saldoDestino = parseFloat(contaDestino.saldo);
+                const saldoDestino = parseFloat(contaDestino.data.saldo);
                 const novoSaldoDestino = saldoDestino + parseFloat(valor_transferencia);
 
+                
+
                 await ContaBancosService.verificarSaldoSuficiente(conta_bancaria_origem_id, fkUsuarioId, saldoAtual);
-                console.log(' ContaBancosService.verificarSaldoSuficiente(conta_bancaria_origem_id, fkUsuarioId, saldoAtual): ', ContaBancosService.verificarSaldoSuficiente(conta_bancaria_origem_id, fkUsuarioId, saldoAtual));
-
-                await contaBancariaRepository.put(conta_bancaria_origem_id, novoSaldoOrigem, fkUsuarioId);
-                await contaBancariaRepository.put(id_conta_bancaria_destino, novoSaldoDestino, contaDestino.usuario_id);
-
+               
+                await Promise.all([ 
+                    contaBancariaRepository.put(conta_bancaria_origem_id, novoSaldoOrigem, fkUsuarioId),
+                    contaBancariaRepository.put(id_conta_bancaria_destino, novoSaldoDestino, contaDestino.data.usuario_id)
+                ]);
+                
                 await ContaBancosService.registrarTransacao({
                     conta_id: conta_bancaria_origem_id,
                     valor: -valor_transferencia,
@@ -85,7 +90,9 @@ class ContaBancosService {
                     usuario_id: fkUsuarioId,
                     contaBancos_id: conta_flux_id,
                     conta_bancos_destino_id: id_conta_bancaria_destino
-                });
+                }, { transaction: t });
+
+
 
                 await ContaBancosService.registrarTransacao({
                     conta_id: id_conta_bancaria_destino,
@@ -96,11 +103,12 @@ class ContaBancosService {
                     usuario_id: contaDestino.usuario_id,
                     contaBancos_id: conta_flux_id,
                     conta_bancos_destino_id: id_conta_bancaria_destino
-                });
+                }, { transaction: t })
 
-                const contaBancariaUpdate = await contaBancariaRepository.findOne({ id_conta: conta_bancaria_origem_id, usuario_id: fkUsuarioId });
+                const contaBancariaUpdate = await contaBancariaRepository.findOne({ contaBancaria_id: conta_bancaria_origem_id, usuario_id: fkUsuarioId });
+                
                 await t.commit();
-                return { data: contaBancariaUpdate, status: 201 };
+                return { data: contaBancariaUpdate.data, status: 201, message: "Transferência realizada com sucesso" };
             }
 
         } catch (error) {
@@ -123,7 +131,13 @@ class ContaBancosService {
     }
 
     static async verificarSaldoSuficiente(contaBancaria_id, usuario_id, valor) {
-        const conta = await contaBancariaRepository.findOne({ contaBancaria_id, usuario_id });
+
+
+        const conta_id = contaBancaria_id;
+
+        const conta = await ContaBancosRepository.findOne({ conta_id, usuario_id });
+
+
         if (!conta || conta.data.saldo < valor) {
             throw new Error('Saldo insuficiente');
         }

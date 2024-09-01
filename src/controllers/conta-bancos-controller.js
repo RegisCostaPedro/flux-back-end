@@ -28,13 +28,15 @@ class ContaBancosController {
                 descricao_transacao,
                 id_conta_bancaria_destino
             );
-      
+
             switch (resultado.status) {
                 case 200:
+                    console.log(resultado.data);
                     res.status(resultado.status).send(resultado.data);
                     break;
                 case 201:
-                    res.status(resultado.status).send(resultado.data);
+                    console.log(resultado.data);
+                    res.status(resultado.status).send({ data: resultado.data, message: resultado.message });
                     break;
                 default: res.status(resultado.status).send({ message: resultado.message });
                     break;
@@ -42,10 +44,10 @@ class ContaBancosController {
 
 
         } catch (error) {
-            // res.status(500).send({
-            //     message: "Falha ao processar requisição: " + error
-            // });
-            throw error
+            res.status(500).send({
+                message: "Falha ao processar requisição: " + error
+            });
+
         }
     }
 }

@@ -15,12 +15,12 @@ class HomeController {
 
             const response = await transacaoService.listarDadosHome(usuario_id_token, usuario_nome_token)
             if (response.status === 200) {
-                return res.status(response.status).json(response.data); // Agora deve retornar os dados corretamente
+                return res.status(response.status).json(response.data);
             } else {
-             
-                return res.status(response.status).json({nome_usuario: response.nome_usuario, message: response.message });
+
+                return res.status(response.status).json({ nome_usuario: response.nome_usuario, message: response.message });
             }
-            
+
         } catch (error) {
             throw error
         }

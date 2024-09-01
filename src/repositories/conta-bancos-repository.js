@@ -2,7 +2,7 @@ const { where } = require('sequelize');
 const Conta = require('../models/conta-bancaria');
 const Usuario = require('../models/usuario');
 const Banco = require('../models/banco');
-const { ContaBancos } = require('../models');
+const { ContaBancos, ContaBancaria } = require('../models');
 
 class ContaBancosRepository {
 
@@ -29,16 +29,24 @@ class ContaBancosRepository {
 
     }
 
-    static findOne = async(body)=>{
+    static findOne = async (body) => {
+
+
+
         const contaEncontrada = await ContaBancos.findOne({
             where: {
-                usuario_id:  body.usuario_id,
-                pix_id:  body.idPix 
+                usuario_id: body.usuario_id
             }
-    
+
+        });
+
+        if (!contaEncontrada) {
+            return {
+                message: 'Conta não encontrada ou inexistente',
+                status: 404
+            };
         }
-        )
-       
+
         if (!contaEncontrada) {
             return {
                 message: 'Conta não encontrada ou inexistente',
@@ -47,33 +55,36 @@ class ContaBancosRepository {
         }
 
         const res = contaEncontrada;
+        // console.log(res);
         return { data: res, status: 200 };
 
     }
     // relacionar o pix com a conta bancos
     static post = async (body) => {
 
-    
+
         const res = await ContaBancos.create({
             pix_id: body.id_pix,
             usuario_id: body.usuario_id,
             contaBancaria_id: body.contaBancaria_id,
-            banco_id:  body.banco_id,
+            banco_id: body.banco_id,
 
         });
-        if(!res){
+        if (!res) {
             return {
                 message: 'Erro ao vincular chave pix e conta bancaria',
                 status: 400
             };
 
         }
-        return { data:`Chave vinculada com sucesso! \n ${res}`, status: 201 };
+        return { data: `Chave vinculada com sucesso! \n ${res}`, status: 201 };
     }
 
     // atualizar conta bancaria do usuário
     static put = async (id, novoSaldo) => {
-        return await Conta.update({ saldo: novoSaldo }, { where: { id_conta: id } });
+
+
+        return await ContaBancos.update({ saldo: novoSaldo }, { where: { contaBancaria_id: id } });
     }
 
     // deletar conta bancaria do usuário
@@ -86,7 +97,7 @@ class ContaBancosRepository {
                 }
             });
 
-            if(!res){
+            if (!res) {
                 return {
                     message: 'Erro deletar conta bancaria',
                     status: 400
