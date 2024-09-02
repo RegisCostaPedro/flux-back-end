@@ -5,7 +5,8 @@ class TransacaoService {
 
 
     static listarDadosHome = async (id_user, usuario_nome_token) => {
-        const query = await homeRepository.getHomeData(id_user);
+        const query = await homeRepository.getHomeData(id_user,10);
+        
         if (!query || query.data == null || query.data.length === 0) {
             return { status: 204, nome_usuario: usuario_nome_token, message: "Você ainda não realizou transações" };
         }
@@ -16,19 +17,19 @@ class TransacaoService {
     }
 
     static listarHistoricoTransacao = async (id_user) => {
-        var query = await cateiraRepository.get(id_user);
-
+        var query = await cateiraRepository.get(id_user,10);
+        console.log(query);
         if (!query || query.data.length === 0) {
             return {
                 status: 204, message: "Você ainda não realizou transações"
             };
         }
         const resultPorcentAndQuery = query.data.map(transacao => {
-            let total = parseFloat(transacao.saldoTotalGeral);
-            let valor = parseFloat(transacao.valor);
+            let total = parseFloat(transacao.saldoTotalGeral).toFixed(2);
+            let valor = parseFloat(transacao.valor).toFixed(2);
             let tipo_operacao = transacao.tipo_operacao;
 
-            if (tipo_operacao == 'entrada') {
+            if (tipo_operacao == 'deposito') {
                 let aumentoPorcent = ((valor / total) * 100);
                 console.log(`Aumento Percentual: ${aumentoPorcent.toFixed(2)}%`);
                 return {
@@ -48,7 +49,7 @@ class TransacaoService {
                 }
             }
             return ;
-        }).filter(transacao => transacao !== undefined);
+        }).filter(transacoes => transacoes !== null);
 
         return { status: 200, data: resultPorcentAndQuery };
 

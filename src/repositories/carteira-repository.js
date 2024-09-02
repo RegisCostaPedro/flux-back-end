@@ -4,12 +4,12 @@ const Banco = require('../models/banco');
 
 class CarteiraRepository {
 
-    static get = async (id_user) => {
+    static get = async (id_user,limit) => {
         const query = await Banco.sequelize
             .query(`
                      SELECT 
     usuario.id_usuario,
-    transacao.valor,
+   ROUND(transacao.valor, 2) AS valor,
     transacao.tipo_operacao,
     transacao.descricao,
     conta_bancaria.saldo AS saldo_conta_bancaria,
@@ -32,9 +32,11 @@ FROM
     banco ON banco.id_banco = conta_bancos.banco_id
 WHERE
     usuario.id_usuario = :id_user
-ORDER BY transacao.data_transacao DESC  
+    ORDER BY transacao.data_transacao DESC
+    LIMIT  :limit
+
     `, {
-                replacements: { id_user: id_user },
+                replacements: { id_user: id_user, limit: limit },
                 type: QueryTypes.SELECT
             });
 

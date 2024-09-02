@@ -4,13 +4,14 @@ const Banco = require('../models/banco');
 
 class HomeRepository {
 
-    static getHomeData = async (id_user) => {
+    static getHomeData = async (id_user, limit) => {
+   
         const query = await Banco.sequelize
             .query(`
                 SELECT 
                 usuario.nome,
                 conta_bancaria.id_conta,
-                transacao.valor,
+               ROUND(transacao.valor, 2) AS valor,
                 transacao.tipo_operacao,
                 transacao.descricao,
                 banco.nome_banco
@@ -24,13 +25,15 @@ class HomeRepository {
                 banco ON banco.id_banco = conta_bancos.banco_id
                 JOIN  conta_bancaria ON conta_bancaria.id_conta = conta_bancos.contaBancaria_id
             WHERE
-                usuario.id_usuario  = :id_user;   
+                usuario.id_usuario  = :id_user 
+         ORDER BY transacao.data_transacao DESC
+    LIMIT  :limit
     `, {
-                replacements: { id_user: id_user },
+                replacements: { id_user: id_user, limit: limit },
                 type: QueryTypes.SELECT
             });
 
-          
+
         return { status: 200, data: query };
     }
 
