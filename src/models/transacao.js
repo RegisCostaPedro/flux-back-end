@@ -12,7 +12,7 @@ class Transacao extends Model {
         primaryKey: true,
         autoIncrement: true
       },
-      contaBancos_id: {
+      conta_flux_origem_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {

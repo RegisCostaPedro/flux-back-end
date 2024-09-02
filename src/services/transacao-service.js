@@ -38,8 +38,11 @@ class TransacaoService {
                     
                 }
             }
-            else if (tipo_operacao == 'retirada') {
+        
+            else if (tipo_operacao == 'transferencia') {
+                console.log(tipo_operacao);
                 let diminuicaoPorcent = ((valor / total) * 100);
+                console.log(diminuicaoPorcent);
                 console.log(`Diminuição Percentual: ${diminuicaoPorcent.toFixed(2)}%`);
 
                 return {

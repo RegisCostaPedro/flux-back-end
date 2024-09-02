@@ -18,7 +18,7 @@ class HomeRepository {
             FROM
                 transacao
                     JOIN
-                conta_bancos ON conta_bancos.id_contaBancos = transacao.contaBancos_id
+                conta_bancos ON conta_bancos.id_contaBancos = transacao.conta_flux_origem_id
                     JOIN
                 usuario ON usuario.id_usuario = conta_bancos.usuario_id
                    

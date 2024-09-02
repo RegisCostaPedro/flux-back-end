@@ -92,7 +92,7 @@ class ContaBancariaService {
                 descricao: descricao,
                 usuario_id: fkUsuarioId,
                 banco_id: fkBancoId,
-                contaBancos_id: contaBancos_id
+                conta_flux_origem_id: contaBancos_id
             }, { transaction: t });
 
             await t.commit();

@@ -99,7 +99,7 @@ class ContaBancosService {
                     tipo_operacao: 'transferência',
                     descricao: descricao_transacao,
                     usuario_id: fkUsuarioId,
-                    contaBancos_id: conta_flux_id,
+                    conta_flux_origem_id: conta_flux_id,
                     conta_bancos_destino_id: id_conta_bancaria_destino
                 }, { transaction: t });
 
@@ -113,7 +113,7 @@ class ContaBancosService {
                     tipo_operacao: 'depósito',
                     descricao: descricao_transacao,
                     usuario_id: contaDestino.usuario_id,
-                    contaBancos_id: conta_flux_id,
+                    conta_flux_origem_id: conta_flux_id,
                     conta_bancos_destino_id: id_conta_bancaria_destino
                 }, { transaction: t })
 

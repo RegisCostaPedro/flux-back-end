@@ -23,16 +23,16 @@ class ContaBancos extends Model {
                 }
 
             },
-            usuario_id: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                references: {
-                    model: Usuario,
-                    key: 'id_usuario',
-                    onDelete: 'CASCADE',
-                    onUpdate: 'CASCADE'
-                }
-            },
+            // usuario_id: {
+            //     type: DataTypes.INTEGER,
+            //     allowNull: false,
+            //     references: {
+            //         model: Usuario,
+            //         key: 'id_usuario',
+            //         onDelete: 'CASCADE',
+            //         onUpdate: 'CASCADE'
+            //     }
+            // },
             contaBancaria_id: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
