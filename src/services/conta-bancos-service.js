@@ -103,7 +103,8 @@ class ContaBancosService {
                     conta_bancos_destino_id: id_conta_bancaria_destino
                 }, { transaction: t });
 
-
+             
+                console.log('id_conta_bancaria_destino: ', id_conta_bancaria_destino);
 
                 await ContaBancosService.registrarTransacao({
                     conta_id: id_conta_bancaria_destino,
@@ -172,6 +173,7 @@ class ContaBancosService {
         await contaBancariaRepository.update({ saldo: novoSaldo }, { where: { id: idConta } });
     }
     static async registrarTransacao(dadosTransacao) {
+        console.log(dadosTransacao);
         const res = await Transacao.create(dadosTransacao);
 
         return { data: res }
