@@ -311,40 +311,37 @@ class PixService {
 
             const pixUser = await repository.findByPixAndUserId(idPix, usuario_id);
 
-            if (pixUser.status !== 200) {
-                return {
-                    message: pixUser.message,
-                    status: pixUser.status
-                };
-            }
 
-            const contaBancos = pixUser.data.ContaBancos[0];
-            if (!contaBancos || contaBancos.length === 0) {
-                return {
-                    message: pixUser.message,
-                    status: pixUser.status
-                };
-            }
-            const pixId = contaBancos.pix_id;
+             if (pixUser.status !== 200) {
+                 return {
+                     message: pixUser.message,
+                     status: pixUser.status
+                 };
+             }
+          
+         
+             const pixId = pixUser.data.Pix.id_pix;
+      
+      
 
-            const options = {
-                method: 'GET',
-                url: `https://api-sandbox.transfeera.com/pix/key/${pixId}`,
-                headers: {
-                    accept: 'application/json',
-                    'User-Agent': emailUsuario,
-                    authorization: `Bearer ${accessToken}`
-                }
-            };
-            const response = await axios.request(options)
+             const options = {
+                 method: 'GET',
+                 url: `https:api-sandbox.transfeera.com/pix/key/${pixId}`,
+                 headers: {
+                     accept: 'application/json',
+                     'User-Agent': emailUsuario,
+                     authorization: `Bearer ${accessToken}`
+                 }
+             };
+             const response = await axios.request(options)
 
-            console.log('response: ', response.data);
+             console.log('response: ', response.data);
 
-            if (pixUser.status === 200) {
-                return { data: response.data, status: pixUser.status }
-            } else {
-                return { message: pixUser.message, status: pixUser.status }
-            }
+             if (pixUser.status === 200) {
+                 return { data: response.data, status: pixUser.status }
+             } else {
+                 return { message: pixUser.message, status: pixUser.status }
+             }
 
 
         } catch (error) {

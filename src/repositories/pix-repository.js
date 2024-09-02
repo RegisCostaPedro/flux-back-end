@@ -10,17 +10,19 @@ require('dotenv').config();
 class PixRepository {
     static get = async (usuario_ID_TOKEN) => {
         // Lista todas as contas pertencentes ao usuário
-        const pixEncontrados = await Pix.findAll({
+
+        const pixEncontrados = await ContaBancos.findAll({
             include: [
                 {
-                    model: ContaBancos,
+                    model: Pix,
+                    attributes: ['id_pix', 'key', 'key_type', 'created_at', 'status',]
+                },
+            ],
             where: {
-                    usuario_id: usuario_ID_TOKEN
-                    }
-                }
-            ]
+                usuario_id: usuario_ID_TOKEN
+            },
+            attributes: []
         });
-
         // Verifica se a chave PIX foi encontrada no banco
         if (pixEncontrados.length === 0) {
             return {
@@ -35,10 +37,10 @@ class PixRepository {
     static post = async (body) => {
         try {
             const usuario = await Usuario.findByPk(body.usuario_id);
-  
 
-            const key_type= body.key_type.toUpperCase()
-  
+
+            const key_type = body.key_type.toUpperCase()
+
             if (!usuario) {
                 return {
                     message: `O usuário não encontrado`,
@@ -46,16 +48,16 @@ class PixRepository {
                 };
 
             }
-         
+
             // Cria a nova entrada na tabela Pix
             const pix = await Pix.create({
-                id_pix: body.id_pix ,
+                id_pix: body.id_pix,
                 key: body.key,
                 key_type: key_type,
                 usuario_id: body.usuario_id,
                 created_at: new Date(),
                 updated_at: new Date(),
-                status:  key_type == "CNPJ" || key_type == "CHAVE_ALEATORIA" ? "REGISTRADA" : "VALIDANDO"
+                status: key_type == "CNPJ" || key_type == "CHAVE_ALEATORIA" ? "REGISTRADA" : "VALIDANDO"
             });
 
             if (!pix) {
@@ -94,21 +96,22 @@ class PixRepository {
         return { data: pixEncontrados, status: 200 };
     }
 
-    static findByPixAndUserId = async (pixKey_id,usuario_id) => {
+    static findByPixAndUserId = async (pixKey_id, usuario_id) => {
         // Procura todas as chaves pertencentes ao usuário
-        const pixEncontrado = await Pix.findOne({
+        const pixEncontrado = await ContaBancos.findOne({
             include: [
                 {
-                    model: ContaBancos,
-                    where: {
-                        pix_id: pixKey_id,
-                        usuario_id: usuario_id
-                    }
-                }
-            ]
+                    model: Pix,
+                    attributes: ['id_pix', 'key', 'key_type', 'created_at', 'status',]
+                },
+            ],
+            where: {
+                usuario_id: usuario_id
+            },
+            attributes: []
         });
 
-        if (!pixEncontrado || !pixEncontrado.ContaBancos || pixEncontrado.ContaBancos.length === 0) {
+        if (!pixEncontrado) {
             return {
                 message: 'Chave Pix não encontrada ou inexistente',
                 status: 404
@@ -141,24 +144,24 @@ class PixRepository {
 
     static delete = async (idPix) => {
         const chaveDeletada = await Pix.destroy({
-            where:{
-                id_pix:idPix
+            where: {
+                id_pix: idPix
             }
         });
-    
+
         if (chaveDeletada === 0) {
             return {
                 message: 'Chave não encontrada ou não autorizada para exclusão',
                 status: 404
             };
         }
-    
+
         return { status: 200 };
     }
 
     static findByKey = async (key) => {
         const chaveExistente = Pix.findOne({
-           where:{ key: key}
+            where: { key: key }
         });
         if (!chaveExistente) {
             return {
