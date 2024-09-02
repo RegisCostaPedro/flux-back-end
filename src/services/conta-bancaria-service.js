@@ -78,7 +78,7 @@ class ContaBancariaService {
 
 
             if (novoSaldo < 0) {
-                return { message: 'Saldo insuficiente', status: 400 };
+                return { message: 'Você não possui saldo o suficiente em sua conta!', status: 400 };
             }
 
             const saldoAtualizado = await repository.put(contaID, novoSaldo, fkUsuarioId);

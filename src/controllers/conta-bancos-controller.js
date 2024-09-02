@@ -31,12 +31,10 @@ class ContaBancosController {
 
             switch (resultado.status) {
                 case 200:
-                    console.log(resultado.data);
-                    res.status(resultado.status).send(resultado.data);
+                    res.status(resultado.status).send({data:resultado.data});
                     break;
                 case 201:
-                    console.log(resultado.data);
-                    res.status(resultado.status).send({ data: resultado.data, message: resultado.message });
+                    res.status(resultado.status).send({data:resultado.data});
                     break;
                 default: res.status(resultado.status).send({ message: resultado.message });
                     break;

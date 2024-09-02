@@ -68,7 +68,7 @@ class ContaBancariaRepository {
 
         const res = await contaEncontrada.update({ saldo: novoSaldo });
 
-        return { data: res, status: 200 };
+        return { data: res, status: 201 };
 
     }
 

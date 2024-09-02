@@ -34,12 +34,15 @@ class ContaBancosRepository {
 
 
         const contaEncontrada = await ContaBancos.findOne({
-            where: {
-                usuario_id: body.usuario_id
-            }
+            where: {usuario_id: body.usuario_id },
+            include: {
+                model: ContaBancaria,
+                as: "Contum",
+                attributes: ['saldo'] 
+              }
 
         });
-
+   
         if (!contaEncontrada) {
             return {
                 message: 'Conta não encontrada ou inexistente',
@@ -55,7 +58,7 @@ class ContaBancosRepository {
         }
 
         const res = contaEncontrada;
-        // console.log(res);
+     
         return { data: res, status: 200 };
 
     }

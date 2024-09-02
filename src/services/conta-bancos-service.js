@@ -22,6 +22,8 @@ class ContaBancosService {
         id_conta_bancaria_destino
     ) => {
         try {
+
+
             const t = await sequelize.transaction();
 
             const usuario = await Usuario.findByPk(fkUsuarioId);
@@ -39,6 +41,7 @@ class ContaBancosService {
 
             if (!id_conta_bancaria_destino) {
 
+
                 const saldoContaAtualizado = await contaBancariaService.atualizarSaldo(
                     conta_bancaria_origem_id,
                     valor_transferencia,
@@ -46,7 +49,7 @@ class ContaBancosService {
                     conta_bancaria_origem_id,
                     conta_flux_id);
 
-                if (!saldoContaAtualizado) {
+                if (!saldoContaAtualizado || !saldoContaAtualizado.data) {
                     await t.rollback();
                     return { message: saldoContaAtualizado.message, status: saldoContaAtualizado.status };
                 }
@@ -54,7 +57,14 @@ class ContaBancosService {
                 const novoSaldo = saldoContaAtualizado.data.saldo;
                 const contaAtualizada = await contaBancariaRepository.put(conta_bancaria_origem_id, novoSaldo, fkUsuarioId);
                 await t.commit();
-                return { data: contaAtualizada.data, status: saldoContaAtualizado.status };
+
+                return {
+                    data: {
+                        ...contaAtualizada.data.dataValues,
+                        message: "Saldo atualizado com sucesso!"
+                    },
+                    status: saldoContaAtualizado.status
+                };
 
 
             } else {
@@ -66,21 +76,22 @@ class ContaBancosService {
                     return { message: 'Conta de destino não encontrada', status: 404 };
                 }
 
-
                 const saldoAtual = parseFloat(contaBancaria.data.saldo);
+
                 const novoSaldoOrigem = saldoAtual - parseFloat(valor_transferencia);
                 const saldoDestino = parseFloat(contaDestino.data.saldo);
                 const novoSaldoDestino = saldoDestino + parseFloat(valor_transferencia);
 
-                
+                if (valor_transferencia > saldoAtual) {
+                    t.rollback();
+                    return { message: 'Você não possui saldo o suficiente em sua conta!', status: 400 };
+                }
 
-                await ContaBancosService.verificarSaldoSuficiente(conta_bancaria_origem_id, fkUsuarioId, saldoAtual);
-               
-                await Promise.all([ 
+                await Promise.all([
                     contaBancariaRepository.put(conta_bancaria_origem_id, novoSaldoOrigem, fkUsuarioId),
                     contaBancariaRepository.put(id_conta_bancaria_destino, novoSaldoDestino, contaDestino.data.usuario_id)
                 ]);
-                
+
                 await ContaBancosService.registrarTransacao({
                     conta_id: conta_bancaria_origem_id,
                     valor: -valor_transferencia,
@@ -106,9 +117,14 @@ class ContaBancosService {
                 }, { transaction: t })
 
                 const contaBancariaUpdate = await contaBancariaRepository.findOne({ contaBancaria_id: conta_bancaria_origem_id, usuario_id: fkUsuarioId });
-                
+
                 await t.commit();
-                return { data: contaBancariaUpdate.data, status: 201, message: "Transferência realizada com sucesso" };
+                return {
+                    data: {
+                        ...contaBancariaUpdate.data.dataValues,
+                        message: "Transferência realizada com sucesso"
+                    }, status: 201
+                };
             }
 
         } catch (error) {
@@ -132,14 +148,21 @@ class ContaBancosService {
 
     static async verificarSaldoSuficiente(contaBancaria_id, usuario_id, valor) {
 
-
         const conta_id = contaBancaria_id;
-
         const conta = await ContaBancosRepository.findOne({ conta_id, usuario_id });
 
+        const saldoDisponivelNaConta = await conta.data.Contum.saldo;
 
-        if (!conta || conta.data.saldo < valor) {
-            throw new Error('Saldo insuficiente');
+        console.log('saldoDisponivelNaConta: ', saldoDisponivelNaConta);
+        console.log('saldoDisponivelNaConta: ', saldoDisponivelNaConta);
+        console.log('saldoDisponivelNaConta: ', saldoDisponivelNaConta);
+        console.log('saldoDisponivelNaConta: ', saldoDisponivelNaConta);
+        console.log('saldoDisponivelNaConta: ', saldoDisponivelNaConta);
+        console.log('saldoDisponivelNaConta: ', saldoDisponivelNaConta);
+        console.log('saldoDisponivelNaConta: ', saldoDisponivelNaConta);
+        console.log('saldoDisponivelNaConta: ', saldoDisponivelNaConta);
+        if (saldoDisponivelNaConta < valor) {
+            return { message: 'Você não possui saldo o suficiente em sua conta!', status: 400 };
         }
 
         return { data: conta.data, status: conta.status };
