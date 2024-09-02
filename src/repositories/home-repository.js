@@ -21,9 +21,9 @@ class HomeRepository {
                 conta_bancos ON conta_bancos.id_contaBancos = transacao.contaBancos_id
                     JOIN
                 usuario ON usuario.id_usuario = conta_bancos.usuario_id
-                    JOIN
-                banco ON banco.id_banco = conta_bancos.banco_id
-                JOIN  conta_bancaria ON conta_bancaria.id_conta = conta_bancos.contaBancaria_id
+                   
+                JOIN conta_bancaria ON conta_bancaria.id_conta = conta_bancos.contaBancaria_id
+                JOIN banco ON banco.id_banco = conta_bancaria.banco_id
             WHERE
                 usuario.id_usuario  = :id_user 
          ORDER BY transacao.data_transacao DESC

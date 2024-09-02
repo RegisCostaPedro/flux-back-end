@@ -1,5 +1,5 @@
 const conexao = require('../config/database');
-const { Sequelize, DataTypes, Model } = require('sequelize');
+const {  DataTypes, Model } = require('sequelize');
 
 
 class ContaBancaria extends Model {

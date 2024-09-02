@@ -14,17 +14,19 @@ Pix.init(conexao);
 ContaBancos.init(conexao);
 Transacao.init(conexao);
 
-Usuario.hasMany(ContaBancaria, { foreignKey: 'usuario_id' });
-Banco.hasMany(ContaBancaria, { foreignKey: 'banco_id' });
-ContaBancaria.belongsTo(Usuario, { foreignKey: 'usuario_id' });
-ContaBancaria.belongsTo(Banco, { foreignKey: 'banco_id' });
-Pix.hasMany(ContaBancos, { foreignKey: 'pix_id' });
-ContaBancos.belongsTo(Pix, { foreignKey: 'pix_id' });
-ContaBancos.belongsTo(Usuario, { foreignKey: 'usuario_id' });
-ContaBancos.belongsTo(ContaBancaria, { foreignKey: 'contaBancaria_id' });
-ContaBancos.belongsTo(Banco, { foreignKey: 'banco_id' });
-ContaBancos.hasMany(Pix, { foreignKey: 'contaBancos_id' });
-Transacao.belongsTo(ContaBancos, { foreignKey: 'contaBancos_id' });
+Usuario.hasMany(ContaBancaria, { foreignKey: 'usuario_id', onDelete: 'CASCADE' });
+ContaBancaria.belongsTo(Usuario, { foreignKey: 'usuario_id', onDelete: 'CASCADE' });
+
+ContaBancos.belongsTo(Usuario, { foreignKey: 'usuario_id', onDelete: 'CASCADE' });
+ContaBancos.belongsTo(ContaBancaria, { foreignKey: 'contaBancaria_id', onDelete: 'CASCADE' });
+
+Pix.belongsTo(ContaBancos, { foreignKey: 'contaBancos_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+ContaBancos.belongsTo(Pix, { foreignKey: 'pix_id', onDelete: 'CASCADE' });
+
+Transacao.belongsTo(ContaBancos, { foreignKey: 'contaBancos_id', onDelete: 'CASCADE' });
+Transacao.belongsTo(ContaBancos, { foreignKey: 'conta_bancos_destino_id', as: 'destino', onDelete: 'CASCADE' });
+
+// conexao.sync({ alter: true });
 
 module.exports = {
   Usuario,

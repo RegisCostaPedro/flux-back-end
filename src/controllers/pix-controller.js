@@ -166,7 +166,7 @@ class PixController {
             console.log(response.data);
 
             if (response.status === 200) {
-                return res.status(response.status).send(response.data);
+                return res.status(response.status).json(response.data);
             } else {
                 return res.status(response.status).send({ message: response.message });
             }

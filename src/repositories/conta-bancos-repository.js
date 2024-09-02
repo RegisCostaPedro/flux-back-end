@@ -1,8 +1,5 @@
-const { where } = require('sequelize');
-const Conta = require('../models/conta-bancaria');
-const Usuario = require('../models/usuario');
-const Banco = require('../models/banco');
-const { ContaBancos, ContaBancaria } = require('../models');
+const pixRepository = require('../repositories/pix-repository');
+const { ContaBancos, ContaBancaria, Pix } = require('../models');
 
 class ContaBancosRepository {
 
@@ -93,21 +90,17 @@ class ContaBancosRepository {
     // deletar conta bancaria do usuário
     static deletePix = async (idPix, usuario_id) => {
         try {
-            const res = await ContaBancos.destroy({
-                where: {
-                    pix_id: idPix,
-                    usuario_id: usuario_id
-                }
-            });
+            const pixDelete = await pixRepository.delete(idPix);
+       
 
-            if (!res) {
+            if (!pixDelete) {
                 return {
                     message: 'Erro deletar conta bancaria',
                     status: 400
                 };
             }
 
-            return { data: 'Conta bancaria deletada com sucesso!', status: 200 };
+            return { data: 'Chave Pix deletada com sucesso!', status: 200 };
         } catch (error) {
             console.error(error);
             return {

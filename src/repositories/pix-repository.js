@@ -35,7 +35,7 @@ class PixRepository {
     static post = async (body) => {
         try {
             const usuario = await Usuario.findByPk(body.usuario_id);
-            const banco = await Banco.findByPk(body.banco_id);
+  
 
             const key_type= body.key_type.toUpperCase()
   
@@ -46,16 +46,13 @@ class PixRepository {
                 };
 
             }
-            if (!banco) {
-                return { message: "Banco não encontrado", status: 404 };
-            }
+         
             // Cria a nova entrada na tabela Pix
             const pix = await Pix.create({
                 id_pix: body.id_pix ,
                 key: body.key,
                 key_type: key_type,
                 usuario_id: body.usuario_id,
-                banco_id: body.banco_id,
                 created_at: new Date(),
                 updated_at: new Date(),
                 status:  key_type == "CNPJ" || key_type == "CHAVE_ALEATORIA" ? "REGISTRADA" : "VALIDANDO"

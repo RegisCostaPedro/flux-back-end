@@ -43,16 +43,7 @@ class ContaBancos extends Model {
                     onUpdate: 'CASCADE'
                 }
             },
-            banco_id: {
-                type: DataTypes.INTEGER,
-                allowNull: true,
-                references: {
-                    model: Banco,
-                    key: 'id_banco',
-                    onDelete: 'CASCADE',
-                    onUpdate: 'CASCADE'
-                }
-            },
+          
             status:{
                 type: DataTypes.ENUM('ATIVO','INATIVO'),
                 allowNull: false,

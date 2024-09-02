@@ -29,7 +29,7 @@ FROM
         JOIN
     usuario ON usuario.id_usuario = conta_bancos.usuario_id
         JOIN
-    banco ON banco.id_banco = conta_bancos.banco_id
+    banco ON banco.id_banco = conta_bancaria.banco_id
 WHERE
     usuario.id_usuario = :id_user
     ORDER BY transacao.data_transacao DESC

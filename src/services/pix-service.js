@@ -1,11 +1,6 @@
-const { where } = require('sequelize');
-const Pix = require('../models/pix');
 const axios = require('axios');
-const authServiceAPI = require('./auth-transfeera-service');
-const authService = require('../services/auth-service');
 const repository = require('../repositories/pix-repository');
 const contaBancariaRepository = require('../repositories/conta-bancaria-repository')
-const { ContaBancos } = require('../models');
 const contaBancosRepository = require('../repositories/conta-bancos-repository')
 require('dotenv').config();
 
@@ -51,8 +46,8 @@ class PixService {
                 id_pix,
                 key: createdKey.key,
                 key_type: createdKey.key_type,
-                usuario_id: dadosUsuario.id,
-                banco_id: banco_id
+                usuario_id: dadosUsuario.id
+            
             });
             const contaBancos = await contaBancosRepository.post({
                 id_pix,

@@ -44,6 +44,7 @@ Caso as tebelas não estajam criadas descomente as linhas abaixo (linha 19-32)
 
 // AVISO ! APOS A COMPILAÇÃO COMENTE ESSAS LINHAS NOVAMENTE, SENÃO VOCÊ PODE PERDER TODO O CONTEUDO
 
+
 // ------ Carrega Rotas ------
 const indexRoute = require('./routes/index-route');
 const usuarioRoute = require('./routes/usuario-route');
@@ -52,7 +53,8 @@ const contaBancariaRoute = require('./routes/conta-bancaria-route');
 const pixRoute = require('./routes/pix-route');
 const homeRoute = require('./routes/home-route');
 const carteiraRoute = require('./routes/carteira-route')
-const contaBancosRoute = require('./routes/conta-bancos-route')
+const contaBancosRoute = require('./routes/conta-bancos-route');
+const { Sequelize } = require('sequelize');
 // rotas de acesso 
 app.use('/', indexRoute);
 app.use(homeRoute);

@@ -1,7 +1,6 @@
 const conexao = require('../config/database');
 const { Sequelize, DataTypes, Model, DATE } = require('sequelize');
 
-
 class Pix extends Model {
   static init(sequelize) {
     return super.init({
@@ -21,16 +20,6 @@ class Pix extends Model {
         allowNull: false
       },
 
-      banco_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Banco',
-          key: 'id_banco'
-        },
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE'
-      },
       created_at: {
         type: DataTypes.DATE,
         allowNull: false
@@ -50,10 +39,7 @@ class Pix extends Model {
       tableName: 'pix'
     });
   }
-  static associate(models) {
 
-    this.hasMany(models.ContaBancos, { foreignKey: 'pix_id' });
-  }
 }
 
 // Pix.init(conexao);
