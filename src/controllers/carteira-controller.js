@@ -16,9 +16,10 @@ class CarteiraController {
 
             const response = await transacaoService.listarHistoricoTransacao(usuario_id_token)
 
+
             if (response.status === 200) {
 
-                return res.status(response.status).json( response.data);
+                return res.status(response.status).json(response.data);
 
             } else {
                 return res.status(response.status).json({ message: response.data })

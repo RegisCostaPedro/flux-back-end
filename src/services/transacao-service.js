@@ -18,7 +18,7 @@ class TransacaoService {
 
     static listarHistoricoTransacao = async (id_user) => {
         var query = await cateiraRepository.get(id_user,10);
-        console.log(query);
+       
         if (!query || query.data.length === 0) {
             return {
                 status: 204, message: "Você ainda não realizou transações"
@@ -53,8 +53,10 @@ class TransacaoService {
             }
             return ;
         }).filter(transacoes => transacoes !== null);
+        const campoSaltoTotalGeral = query.data.map(transacao => transacao.saldoTotalGeral);
+        const totalGeral = campoSaltoTotalGeral.length > 0 ? campoSaltoTotalGeral[0] : null;
 
-        return { status: 200, data: resultPorcentAndQuery };
+        return { status: 200, data: {totalGeral,resultPorcentAndQuery} };
 
     }
 
