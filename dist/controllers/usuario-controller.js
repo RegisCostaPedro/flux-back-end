@@ -1,5 +1,5 @@
 const repository = require('../repositories/usuario-repository');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const ValidationContract = require('../validators/fluent-validator');
 const authService = require('../services/auth-service');
@@ -72,6 +72,7 @@ class UsuarioController {
     //Cadastrar usuário
     static cadastrarUsuario = async (req, res) => {
 
+
         try {
             let contract = new ValidationContract();
           
@@ -87,8 +88,9 @@ class UsuarioController {
             const usuario = await service.create(nome, cpf, email, senha);
 
 
+
             if (usuario.status === 201) {
-                res.status(201).json(usuario.data);
+                res.status(201).send(usuario.data);
             } else {
                 res.status(usuario.status).send({ message: usuario.message });
             }
@@ -100,24 +102,14 @@ class UsuarioController {
             })
         }
     }
-
-    static validarConta = async (req,res) =>{
-        const codigoDeConfirmacao = req.body.codigoDeConfirmacao;
-        const response = await service.validarCodigoDeConfirmacao(codigoDeConfirmacao);
-      
-this.cadastrarUsuario
-        if (response.status === 200) {
-            return  res.status(response.status).json(response.data);
-        } else {
-           return res.status(response.status).send({ message: response.message });
-        }
-
-    }
     //Atualizar usuário
     static atualizarUsuario = async (req, res) => {
 
         try {
         
+
+
+
             const usuario = await service.update(req.params.id, req.body);
 
             if (usuario.status === 201) {
@@ -127,10 +119,10 @@ this.cadastrarUsuario
             }
 
         } catch (error) {
-           return res.status(500).send({
-                message: "Falha ao processar requisição: " + error
-            });
-         
+            // return res.status(500).send({
+            //     message: "Falha ao processar requisição: " + error
+            // });
+            throw error;
         }
     }
 
@@ -185,10 +177,6 @@ this.cadastrarUsuario
         }
     }
 
-    static recuperarSenha = async (req,res)=>{
-
-    }
-
     // Refresh token
     static refreshToken = async (req, res) => {
         try {
@@ -202,6 +190,8 @@ this.cadastrarUsuario
             const usuario = await repository.getById(usuario_id_token);
          
            
+
+       
             if (!usuario || !usuario.data) {
                 res.status(404).send({ message: 'Usuário não encontrado' });
                 return;

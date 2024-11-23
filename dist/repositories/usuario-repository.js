@@ -1,6 +1,6 @@
 const { where } = require('sequelize');
 const Usuario = require('../models/usuario');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 class UsarioRepository {
 
@@ -94,40 +94,6 @@ class UsarioRepository {
         return usuario;
     };
 
-    static findByVerifyCode = async(codigo) =>{
-        const codigoEncontrado = await Usuario.findOne({
-                where:{
-                    verifyCode: codigo
-                } 
-            }
-        );
-      
-        if(!codigoEncontrado){
-            return {
-                message: 'Erro ao verificar código',
-                status: 400
-            };
-        }
-
-      const res = await this.ativarConta(codigoEncontrado.verifyCode);
- 
-      if(res){
-      return {data: 'Conta ativada', status:200}
-      }
-    }
-
-    static ativarConta = async(codigo)=>{
-      
-     const res = await Usuario.update({status:1,verifyCode:null},{where:{verifyCode: codigo}});
-     if(!res){
-        return {
-            message: 'Erro ao verificar código',
-            status: 400
-        };
-    }
-     return res;
-    }
- 
 }
 
 
