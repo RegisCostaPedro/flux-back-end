@@ -47,7 +47,6 @@ class PixService {
           contaBancariaUsuario
         );
         return response;
-        
       } else {
         const options = {
           method: "POST",
@@ -60,9 +59,6 @@ class PixService {
           },
           data: { key: key, key_type: key_typeUpCase },
         };
-
-        console.log("EMAIL ENVIADO PARA ", dadosUsuario.email);
-        console.log(options);
 
         const response = await axios.request(options);
         const createdKey = response.data;
@@ -101,8 +97,6 @@ class PixService {
         }
       }
     } catch (error) {
-      console.error("Error creating PIX key:", error);
-
       if (error.code === "ER_DUP_ENTRY") {
         return {
           status: 400,
@@ -130,7 +124,6 @@ class PixService {
     verifyCode
   ) => {
     try {
-      console.log(verifyCode);
       if (verifyCode.length !== 6) {
         return {
           message: "A chave deve conter apenas 6 dígitos numéricos",
@@ -152,7 +145,6 @@ class PixService {
       };
 
       const verifyResponse = await axios.request(verifyOptions);
-      console.log("Verify Response:", verifyResponse.data);
       // Consultar o status após a verificação
       const statusOptions = {
         method: "GET",
@@ -166,7 +158,6 @@ class PixService {
 
       const statusResponse = await axios.request(statusOptions);
       const keyRegistredStatus = statusResponse.data.status;
-      console.log("STATUS DA CHAVE", statusResponse.data.status);
       const updatedStatus =
         keyRegistredStatus == "REGISTRADA" ? "REGISTRADA" : keyRegistredStatus;
 
@@ -187,8 +178,6 @@ class PixService {
         status: 200,
       };
     } catch (error) {
-      console.error("Error verifying PIX key:", error);
-
       // Pegando o erro vindo da API da Transfeera
       if (error.response && error.response.data) {
         return {
@@ -218,7 +207,6 @@ class PixService {
       };
 
       const verifyResponse = await axios.request(verifyOptions);
-      console.log("Verify Response:", verifyResponse.data);
       // Consultar o status após a verificação
       const statusOptions = {
         method: "GET",
@@ -253,8 +241,6 @@ class PixService {
         status: 200,
       };
     } catch (error) {
-      console.error("Error verifying PIX key:", error);
-
       // Pegando o erro vindo da API da Transfeera
       if (error.response && error.response.data) {
         return {
@@ -332,7 +318,6 @@ class PixService {
         };
       }
     } catch (error) {
-      console.error(error);
       return {
         message: error.response
           ? error.response.data.message
@@ -369,15 +354,12 @@ class PixService {
       };
       const response = await axios.request(options);
 
-      console.log("response: ", response.data);
-
       if (pixUser.status === 200) {
         return { data: response.data, status: pixUser.status };
       } else {
         return { message: pixUser.message, status: pixUser.status };
       }
     } catch (error) {
-      console.error("Error finding PIX key:", error);
       //   Pegando o erro vindo da API da Transfeera
       if (error.response && error.response.data) {
         return {
@@ -420,10 +402,6 @@ class PixService {
     }
 
     if (pix.status === 201) {
-      console.log({ status: pix.status });
-      console.log({ status: pix.status });
-      console.log({ status: pix.status });
-      console.log({ status: pix.status });
       return { status: pix.status, data: pix.data };
     } else {
       return { status: pix.status || 500, message: pix.message };
@@ -434,7 +412,6 @@ class PixService {
     const chaveExistente = await repository.findByKey(key);
 
     if (chaveExistente.status == 400) {
-      console.log(chaveExistente.message);
       return {
         status: chaveExistente.status,
         message: chaveExistente.message,
