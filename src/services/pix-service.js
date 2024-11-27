@@ -17,7 +17,7 @@ class PixService {
       const usuario_id = dadosUsuario.id;
       const key_typeUpCase = key_type.toUpperCase();
       const chaveExistente = await this.procurarChaveExistente(key);
-
+console.warn(chaveExistente);
       if (chaveExistente) {
         return {
           status: chaveExistente.status,
@@ -172,6 +172,7 @@ class PixService {
           status: 500,
         };
       }
+
 
       return {
         data: statusResponse.data,
@@ -353,7 +354,7 @@ class PixService {
         },
       };
       const response = await axios.request(options);
-
+console.log(response);
       if (pixUser.status === 200) {
         return { data: response.data, status: pixUser.status };
       } else {
