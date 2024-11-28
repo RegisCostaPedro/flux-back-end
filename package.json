@@ -7,8 +7,8 @@
     "node": "20"
   },
   "scripts": {
-    "start": "tsup src && node ./dist/app.js",
-    "run": "nodemon ./bin/app.js",
+    "start": "node ./dist/app.js",
+    "run": "nodemon ./bin/server.js",
     "test": "echo 'Error: no test specified'; false",
     "build": "tsup src"
   },
@@ -55,4 +55,3 @@
     "typescript": "^5.7.2"
   }
 }
-

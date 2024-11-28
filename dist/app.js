@@ -7,7 +7,7 @@ var __commonJS = (cb, mod) => function __require() {
 var require_database = __commonJS({
   "src/config/database.js"(exports2, module2) {
     var { Sequelize } = require("sequelize");
-    var conexao2 = new Sequelize("flux_db", "root", "", {
+    var conexao2 = new Sequelize("flux_db_teste", "root", "", {
       host: "localhost",
       dialect: "mysql",
       define: {
@@ -1700,6 +1700,7 @@ var require_models = __commonJS({
     ContaBancos.belongsTo(Pix, { foreignKey: "pix_id", onDelete: "CASCADE" });
     ContaBancaria.belongsTo(Banco, { foreignKey: "banco_id" });
     Banco.hasMany(ContaBancaria, { foreignKey: "banco_id" });
+    conexao2.sync({ alter: true });
     module2.exports = {
       Usuario,
       Banco,
