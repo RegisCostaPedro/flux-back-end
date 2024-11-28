@@ -1,7 +1,8 @@
 usuario.http
 node_modules
 .vs
+dist
 credentials.json
 token.json
 .env
-dist
+
