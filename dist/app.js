@@ -10,6 +10,7 @@ var require_database = __commonJS({
     var conexao2 = new Sequelize("flux_db_teste", "flux_db_p14w_user", "OhraWScboBOrOuqdRI0Z7Fz9BXHlJXBe", {
       host: 'dpg-ct3r9di3esus73fajcc0-a',
       dialect: "postgres",
+      port: '5432',
       define: {
         timestamps: false,
         freezeTableName: true
