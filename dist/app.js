@@ -7,9 +7,9 @@ var __commonJS = (cb, mod) => function __require() {
 var require_database = __commonJS({
   "src/config/database.js"(exports2, module2) {
     var { Sequelize } = require("sequelize");
-    var conexao2 = new Sequelize("flux_db_teste", "root", "", {
-      host: "localhost",
-      dialect: "mysql",
+    var conexao2 = new Sequelize("flux_db_teste", "flux_db_p14w_user", "OhraWScboBOrOuqdRI0Z7Fz9BXHlJXBe", {
+      host: 'dpg-ct3r9di3esus73fajcc0-a',
+      dialect: "postgres",
       define: {
         timestamps: false,
         freezeTableName: true
