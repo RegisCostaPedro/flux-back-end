@@ -4,7 +4,7 @@ const { Sequelize } = require('sequelize');
 segundo parãmetro da linha abaixo é o seu usuario
 e o segundo parâmetro é a senha do seu banco */
 
-const conexao = new Sequelize('flux_db', 'root', '', {
+const conexao = new Sequelize('flux_db_teste', 'root', '', {
     host: 'localhost',
    dialect: 'mysql',
     define: {
