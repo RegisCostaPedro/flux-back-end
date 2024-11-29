@@ -7,7 +7,7 @@
     "node": "20"
   },
   "scripts": {
-    "start": "nodemon ./dist/app.js",
+    "start": "nodemon ./bin/server.js",
     "run": "nodemon ./bin/server.js",
     "test": "echo 'Error: no test specified'; false",
     "build": "tsup src",

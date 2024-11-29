@@ -6,11 +6,11 @@ var __commonJS = (cb, mod) => function __require() {
 // src/config/database.js
 var require_database = __commonJS({
   "src/config/database.js"(exports2, module2) {
+    require("dotenv").config();
     var { Sequelize } = require("sequelize");
-    var conexao2 = new Sequelize("flux_db_teste", "flux_db_p14w_user", "OhraWScboBOrOuqdRI0Z7Fz9BXHlJXBe", {
-      host: 'dpg-ct3r9di3esus73fajcc0-a',
-      dialect: "postgres",
-      port: '5432',
+    var conexao2 = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PWD, {
+      host: process.env.DB_HOST,
+      dialect: process.env.DB_DIALECT,
       define: {
         timestamps: false,
         freezeTableName: true
