@@ -73,7 +73,7 @@ app.use(contasFlux);
 // ------ Habilita o CORS ------
 
   const corsOptions = {
-    origin: [/http:\/\/localhost:\d{4}/, /http:\/\/192\.168\.\d{1,3}\.\d{1,3}:\d{4}/,'http://localhost:8100','*'],
+    origin: ['*',/http:\/\/localhost:\d{4}/, /http:\/\/192\.168\.\d{1,3}\.\d{1,3}:\d{4}/,'http://localhost:8100','*'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     allowedHeaders: 'Content-Type,Authorization',

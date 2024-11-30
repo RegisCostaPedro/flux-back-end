@@ -39,6 +39,11 @@ class ContaController {
             const tipo_conta = req.body.tipo_conta
             const fkUsuarioId = dadosUsuario.id;
             const fkBancoId = req.body.fkBancoId;
+           
+            console.log(saldo);
+            console.log(tipo_conta);
+            console.log(fkUsuarioId);
+            console.log(fkBancoId);
 
 
 

@@ -78,17 +78,17 @@ class ContaBancosService {
         };
       }
 
-      if (
-        contaDestino.data.id_contaBancos === contaBancaria.data.id_contaBancos
-      ) {
+      if (contaDestino.data.id_contaBancos === contaBancaria.data.id_contaBancos) {
         console.log(
           "Você não pode realizar uma transferência para uma mesma conta bancária"
         );
+        await t.rollback();
         return {
           message:
             "Você não pode realizar uma transferência para uma mesma conta bancária",
           status: 400,
         };
+        
       }
 
 

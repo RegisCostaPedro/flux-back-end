@@ -84,6 +84,8 @@ console.log(query);
       id_user,
       contaBancariaId
     );
+
+    console.log(query.data);
     if (!query || query.data.length === 0) {
       return {
         status: 204,
