@@ -6,7 +6,7 @@
 
 <p align="justify">A API teve como objetivo servir como meio de comunicação entre o banco de de dados, o front-end e também a api da Fintech <a href='https://docs.transfeera.dev/docs/comece-por-aqui-introducao#/'>Transfeera</a> que permite o gerenciamento de chaves Pix e realização de transações financeiras  entre sistemas.</p>
 
-#### Parceiros: <a href="https://github.com/VieiraaSara">Sara da Silva Vieira</a>
+#### Parceiros: <a href="https://github.com/VieiraaSara">Sara da Silva Vieira (front-end)</a>
 
 # Ferramentas
 * Node.js
