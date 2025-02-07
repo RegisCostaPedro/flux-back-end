@@ -30,5 +30,10 @@
 <img src="footer-flux.png">
 
 <footer>
- ⚠️ Atenção: Este é projeto ainda está em desenvolvimento.
+ ⚠️ Este é projeto ainda está em desenvolvimento.
+ <br>
+ ⚠️ O repositório do app está privado.
+  <br>
+  <br>
+ mais detalhes: <a href="https://www.linkedin.com/in/regis-costa-pedro-769a36282/details/projects/">Projeto no Linkedin.</a>
 </footer>
