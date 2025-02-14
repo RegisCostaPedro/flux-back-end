@@ -31,7 +31,7 @@
 
 <footer>
 
- ⚠️ Este é projeto ainda está em desenvolvimento.
+ ⚠️ Este projeto ainda está em desenvolvimento.
  <br>
  📱<a href="https://github.com/VieiraaSara/flux_completo">Link para o front-end</a>  
   <br>
