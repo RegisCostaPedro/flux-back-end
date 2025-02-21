@@ -26,12 +26,15 @@
 - Impressão de extrato financeiro de uma conta bancária individual.
 - Transações financeiras entre diferentes bancos.
 - Integração financeira entre contas bancárias através da chave Pix.
+  
+### Documentação da API
+📄 <a href="https://documenter.getpostman.com/view/32287278/2sAXjKbYmv#a510ee40-b092-4538-8116-e2f9b786e153">Acessar documentação.</a>  
 <br><br>
 <img src="footer-flux.png">
 
 <footer>
 
- ⚠️ Este projeto ainda está em desenvolvimento.
+
  <br>
  📱<a href="https://github.com/VieiraaSara/flux_completo">Link para o front-end</a>  
   <br>
